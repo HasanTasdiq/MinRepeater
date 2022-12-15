@@ -16,7 +16,11 @@ def read_graph_from_gml(file):
     with_lon = False
     for node, nodedata in G.nodes.items():
         if "position" in nodedata:
+            
             pos[node] = ast.literal_eval(nodedata["position"])
+            nodedata['Longitude'] = ast.literal_eval(nodedata["position"])[0]
+            nodedata['Latitude'] = ast.literal_eval(nodedata["position"])[1]
+
         elif "Longitude" in nodedata and "Latitude" in nodedata:
             with_lon = True
             pos[node] = [nodedata['Longitude'], nodedata['Latitude']]
@@ -52,7 +56,7 @@ def _compute_dist_lat_lon(graph):
         c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a))
         dist = np.round(R * c, 5)
         graph.edges[node1, node2]['length'] = dist
-def draw_graph(G):
+def draw_graph(G , center_nodes):
     pos = nx.get_node_attributes(G, 'pos')
     repeater_nodes = []
     end_nodes = []
@@ -62,21 +66,24 @@ def draw_graph(G):
         else:
             end_nodes.append(node)
     fig, ax = plt.subplots(figsize=(7, 7))
-    end_nodes = nx.draw_networkx_nodes(G=G, pos=pos, nodelist=end_nodes, node_shape='s', node_size=150,
+    c_nodes = nx.draw_networkx_nodes(G=G, pos=pos, nodelist=center_nodes, node_shape='s', node_size=150,
                                        node_color=[[1.0, 120 / 255, 0.]], label="End Node", linewidths=3)
-    end_nodes.set_edgecolor('k')
+    c_nodes.set_edgecolor('k')
     rep_nodes = nx.draw_networkx_nodes(G=G, pos=pos, nodelist=repeater_nodes, node_size=150,
                                        node_color=[[1, 1, 1]], label="Repeater Node")
     rep_nodes.set_edgecolor('k')
     end_node_labels = {}
     repeater_node_labels = {}
+    center_node_labels = {}
     for node, nodedata in G.nodes.items():
         # labels[node] = node
         if G.nodes[node]['type'] == 'end_node':  # or node in self.repeater_nodes_chosen:
             end_node_labels[node] = node
         else:
             repeater_node_labels[node] = node
-    nx.draw_networkx_labels(G=G, pos=pos, labels=end_node_labels, font_size=7, font_weight="bold", font_color="w",
+    for node in center_nodes:
+        center_node_labels[node] = node
+    nx.draw_networkx_labels(G=G, pos=pos, labels=center_node_labels, font_size=7, font_weight="bold", font_color="w",
                             font_family='serif')
     nx.draw_networkx_labels(G=G, pos=pos, labels=repeater_node_labels, font_size=5, font_weight="bold")
     nx.draw_networkx_edges(G=G, pos=pos, width=1)
@@ -97,3 +104,64 @@ def compute_shortest_path(G):
                 (path_cost, sp) = nx.single_source_dijkstra(G=G, source=i, target=j, weight='length')
                 # Store the path cost and the shortest path itself as a tuple in the dictionary
                 shortest_path_dict[(i, j)] = (path_cost, sp)
+def add_quantum_repeater( G , L_max):
+
+    q_node  = 0
+    q_node_list = []
+    q_node_edges = []
+    pos = nx.get_node_attributes(G, 'pos')
+    done_dest_node = {}
+       
+    for i, j in G.edges():
+
+        length = G[i][j]['length']
+            
+        if length > L_max :
+            lat1 = G.nodes[i]['Latitude']
+            lon1 = G.nodes[i]['Longitude']
+            lat2 = G.nodes[j]['Latitude']
+            lon2 = G.nodes[j]['Longitude']
+            node1 = i
+            for i in range(1 ,  int(length / L_max) + 1):
+                node_data = {}
+                dist = i * L_max
+                lat3 , lon3 = get_intermediate_point(lat1 , lon1 , lat2 , lon2 , dist)
+                # print("//// " ,lat1,lon1,lat2,lon2, lat3 , lon3 , dist)
+                node2 = "QN" +str(q_node) 
+                node_data['node'] = node2
+                node_data['Latitude'] = float(lat3)
+                node_data['Longitude'] = float(lon3)
+
+
+                q_node_list.append(node_data)
+                q_node_edges.append((node1 , node2))
+                node1 = node2
+                q_node += 1
+            q_node_edges.append((node2 , j))
+            done_dest_node[j] = 1
+
+    for node_data in q_node_list:
+        G.add_node(node_data['node'], Longitude=node_data['Longitude'] , Latitude=node_data['Latitude'])
+        G.nodes[node_data['node']]['type'] = 'new_repeater_node'
+        pos[node_data['node']] = [node_data['Longitude'], node_data['Latitude']]
+
+    G.add_edges_from(q_node_edges)
+    nx.set_node_attributes(G, pos, name='pos')
+
+def get_intermediate_point(lat1 , lon1 , lat2 , lon2 , d):
+    constant = np.pi / 180
+    R = 6371
+    φ1 = lat1 * constant
+    λ1 = lon1 * constant
+    φ2 = lat2 * constant
+    λ2 = lon2 * constant
+    y = np.sin(λ2-λ1) * np.cos(φ2)
+    x = np.cos(φ1)*np.sin(φ2) -  np.sin(φ1)*np.cos(φ2)*np.cos(λ2-λ1)
+    θ = np.arctan2(y, x)
+    brng = (θ*180/np.pi + 360) % 360;  #in degrees
+    brng = brng * constant
+
+    φ3 = np.arcsin( np.sin(φ1)*np.cos(d/R ) + np.cos(φ1)*np.sin(d/R )*np.cos(brng) )
+    λ3 = λ1 + np.arctan2(np.sin(brng)*np.sin(d/R )*np.cos(φ1),  np.cos(d/R )-np.sin(φ1)*np.sin(φ2))
+
+    return φ3/constant , λ3/constant
