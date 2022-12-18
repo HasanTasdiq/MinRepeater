@@ -9,7 +9,7 @@ def solve(G , L_max , delta):
 
 def main(file_name):
     L_max = 136
-    delta = 1 / 2
+    delta = 1 
     G = read_graph_from_gml(file_name)
     add_quantum_repeater(G , L_max - 6)
     compute_shortest_path(G)
