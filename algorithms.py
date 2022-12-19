@@ -6,7 +6,7 @@ def compute_center_nodes(G , L_max , delta):
     # print("sssssss " , get_distance('Eindhoven 2' , 'R\'dam 2'))
     center_nodes = set()
     nodes = list(G.nodes())
-    print("len of nodes " , len(nodes))
+    # print("len of nodes " , len(nodes))
     initial_center_node = nodes[random.randint(0, len(nodes) - 1)]
     # initial_center_node = nodes[0]
     center_nodes.add(initial_center_node)
@@ -16,7 +16,7 @@ def compute_center_nodes(G , L_max , delta):
 
     max_len = L_max * delta
     while max_len >= L_max * delta:
-        print("len of nodes " , len(nodes))
+        # print("len of nodes " , len(nodes))
 
         dist = 0
         
@@ -55,7 +55,7 @@ def compute_center_nodes(G , L_max , delta):
         
 
     
-    print(center_nodes)
+    print('center_nodes len' , len(center_nodes))
     # t_d = get_far_node_from_all_center(center_nodes , list(G.nodes()))
     # print("==== t d " , t_d)
     return center_nodes
@@ -92,6 +92,19 @@ def remove_nodes_inside_circle(center , nodes , radius):
     
     for node in nodes_inside_circle:
         nodes.remove(node)
+
+def compute_shortest_path_between_centers(G , center_nodes , L_max):
+    shortest_path_between_centers = []
+    for i in center_nodes:
+        for j in center_nodes:
+            if i != j:
+                # Use NetworkX to generate the shortest path with Dijkstra's algorithm
+                (path_cost, sp) = nx.single_source_dijkstra(G=G, source=i, target=j, weight='length')
+                if path_cost <= L_max / 2:
+                    shortest_path_between_centers.append((i , j , sp))
+    print('len of crit path set' , len(shortest_path_between_centers))
+    
+                
 
 
 

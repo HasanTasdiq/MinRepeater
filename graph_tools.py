@@ -104,13 +104,16 @@ def compute_shortest_path(G):
                 (path_cost, sp) = nx.single_source_dijkstra(G=G, source=i, target=j, weight='length')
                 # Store the path cost and the shortest path itself as a tuple in the dictionary
                 shortest_path_dict[(i, j)] = (path_cost, sp)
+    print('shortest_path_dict len' , len(shortest_path_dict))
 def add_quantum_repeater( G , L_max):
+    print("====================== number of nodes 1 " , G.number_of_nodes() , " ===================================")
 
     q_node  = 0
     q_node_list = []
     q_node_edges = []
     pos = nx.get_node_attributes(G, 'pos')
     done_dest_node = {}
+    removable_edge = []
        
     for i, j in G.edges():
 
@@ -122,9 +125,9 @@ def add_quantum_repeater( G , L_max):
             lat2 = G.nodes[j]['Latitude']
             lon2 = G.nodes[j]['Longitude']
             node1 = i
-            for i in range(1 ,  int(length / L_max) + 1):
+            for it in range(1 ,  int(length / L_max) + 1):
                 node_data = {}
-                dist = i * L_max
+                dist = it * L_max
                 lat3 , lon3 = get_intermediate_point(lat1 , lon1 , lat2 , lon2 , dist)
                 # print("//// " ,lat1,lon1,lat2,lon2, lat3 , lon3 , dist)
                 node2 = "QN" +str(q_node) 
@@ -139,14 +142,24 @@ def add_quantum_repeater( G , L_max):
                 q_node += 1
             q_node_edges.append((node2 , j))
             done_dest_node[j] = 1
+            removable_edge.append((i, j))
+            # print('== ' , i , '-' , j)
+    
 
     for node_data in q_node_list:
         G.add_node(node_data['node'], Longitude=node_data['Longitude'] , Latitude=node_data['Latitude'])
         G.nodes[node_data['node']]['type'] = 'new_repeater_node'
         pos[node_data['node']] = [node_data['Longitude'], node_data['Latitude']]
+    for i , j in removable_edge:
+        # print(i , '-' , j)
+        G.remove_edge(i , j)
 
     G.add_edges_from(q_node_edges)
+    for i, j in G.edges():
+        if 'length' not in G[i][j]:
+                _compute_dist_lat_lon(G)
     nx.set_node_attributes(G, pos, name='pos')
+    print("====================== number of nodes 2 " , G.number_of_nodes() , " ===================================")
 
 def get_intermediate_point(lat1 , lon1 , lat2 , lon2 , d):
     constant = np.pi / 180
