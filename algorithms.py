@@ -50,7 +50,7 @@ def compute_center_nodes(G , L_max , delta):
 
         center , d = get_far_node_from_all_center(center_nodes , temp_list)
 
-        if d > L_max * delta:
+        if d >= L_max * delta:
             center_nodes.add(center)
             # print("chosen " , center , d)
             nodes.remove(center)
@@ -131,8 +131,11 @@ def check_solution(G , center_nodes , L_max):
     end_nodes =  [x for x,y in G.nodes(data=True) if y['type']=="repeater_node"]
     unique_end_node_pairs = list(itertools.combinations(end_nodes, r=2))
     print('len unique_end_node_pairs:' , len(unique_end_node_pairs))
+    pair_no = 1
     solution_exists = True
     for i , j in unique_end_node_pairs:
+        print("running for pair:" , pair_no)
+
         paths = list(nx.all_simple_paths(G, source=i, target=j))
         paths.sort(key = len)
         # print("for pair:" , i , j , get_distance(i ,j) , len(paths))
@@ -149,6 +152,7 @@ def check_solution(G , center_nodes , L_max):
             print("--------------------- !!!!!!!!!!!! NOT feasible !!!!!!!!!! ---------------" )
             solution_exists = False
             break
+        pair_no += 1
     if solution_exists:
         print("*********** solution exists!!!!!!!!!!!!!!")
         new_node_count = 0
@@ -156,6 +160,7 @@ def check_solution(G , center_nodes , L_max):
             if G.nodes[node]["type"] == "new_repeater_node":
                 new_node_count += 1
         print("new_node_count:", new_node_count )
+        print("total quantum repeater needed:", len(center_nodes) )
                 
 
 
