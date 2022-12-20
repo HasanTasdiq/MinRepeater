@@ -1,14 +1,18 @@
 import networkx as nx
 from graph_tools import shortest_path_dict
 import random
+import itertools
+
 
 def compute_center_nodes(G , L_max , delta):
-    # print("sssssss " , get_distance('Eindhoven 2' , 'R\'dam 2'))
+    # print("sssssss " , get_distance('A\'dam 2' , 'Westerbork'))
+    # print("sssssss " , get_distance('PNNL' , 'NETL-ALB'))
+    # print("sssssss " , get_distance('Nijmegen 1' , 'Utrecht 1'))
     center_nodes = set()
     nodes = list(G.nodes())
     # print("len of nodes " , len(nodes))
-    initial_center_node = nodes[random.randint(0, len(nodes) - 1)]
-    # initial_center_node = nodes[0]
+    # initial_center_node = nodes[random.randint(0, len(nodes) - 1)]
+    initial_center_node = nodes[0]
     center_nodes.add(initial_center_node)
     nodes.remove(initial_center_node)
 
@@ -31,6 +35,9 @@ def compute_center_nodes(G , L_max , delta):
                     # print("yes in temp")
                     continue
                 dist = get_distance(c_node , node)
+                # adding weight
+                if G.nodes[node]["type"] == "new_repeater_node":
+                    dist = dist * .7
                 if dist > max_len:
                     max_len = dist
                     chosen_center = node
@@ -56,8 +63,9 @@ def compute_center_nodes(G , L_max , delta):
 
     
     print('center_nodes len' , len(center_nodes))
-    # t_d = get_far_node_from_all_center(center_nodes , list(G.nodes()))
+
     # print("==== t d " , t_d)
+    check_solution(G , center_nodes , L_max)
     return center_nodes
 
 def get_distance(node1 , node2 ):
@@ -103,7 +111,50 @@ def compute_shortest_path_between_centers(G , center_nodes , L_max):
                 if path_cost <= L_max / 2:
                     shortest_path_between_centers.append((i , j , sp))
     print('len of crit path set' , len(shortest_path_between_centers))
-    
+def is_feasible_path(path , center_nodes , L_max):
+    first_node_of_link = path[0]
+    current_node = None
+    for i in range(1 , len(path) - 1):
+        current_node = path[i]
+        if current_node in center_nodes:
+            dist = get_distance(first_node_of_link , current_node)
+            if dist >= L_max:
+                return False
+            first_node_of_link = current_node
+    return True
+            
+            
+
+
+
+def check_solution(G , center_nodes , L_max):
+    end_nodes =  [x for x,y in G.nodes(data=True) if y['type']=="repeater_node"]
+    unique_end_node_pairs = list(itertools.combinations(end_nodes, r=2))
+    print('len unique_end_node_pairs:' , len(unique_end_node_pairs))
+    solution_exists = True
+    for i , j in unique_end_node_pairs:
+        paths = list(nx.all_simple_paths(G, source=i, target=j))
+        # print("for pair:" , i , j , get_distance(i ,j) , len(paths))
+
+        feasible_path = None
+        path_length = 9999
+        for path in paths:
+            if is_feasible_path(path , center_nodes , L_max):
+                # print("path len" , len(path))
+                if len(path) < path_length:
+                    feasible_path = path
+                    path_length = len(path)
+        if feasible_path is None:
+            print("--------------------- !!!!!!!!!!!! NOT feasible !!!!!!!!!! ---------------" )
+            solution_exists = False
+            break
+    if solution_exists:
+        print("*********** solution exists!!!!!!!!!!!!!!")
+        new_node_count = 0
+        for node in center_nodes:
+            if G.nodes[node]["type"] == "new_repeater_node":
+                new_node_count += 1
+        print("new_node_count:", new_node_count )
                 
 
 

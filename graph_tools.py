@@ -31,10 +31,7 @@ def read_graph_from_gml(file):
             nodedata['type'] = 'repeater_node'
 
     
-    for i, j in G.edges():
-        if 'length' not in G[i][j]:
-            if with_lon:
-                _compute_dist_lat_lon(G)
+    _compute_dist_lat_lon(G)
 
     nx.set_node_attributes(G, pos, name='pos')
  
@@ -66,10 +63,10 @@ def draw_graph(G , center_nodes):
         else:
             end_nodes.append(node)
     fig, ax = plt.subplots(figsize=(7, 7))
-    c_nodes = nx.draw_networkx_nodes(G=G, pos=pos, nodelist=center_nodes, node_shape='s', node_size=150,
+    c_nodes = nx.draw_networkx_nodes(G=G, pos=pos, nodelist=center_nodes, node_shape='s', node_size=350,
                                        node_color=[[1.0, 120 / 255, 0.]], label="End Node", linewidths=3)
     c_nodes.set_edgecolor('k')
-    rep_nodes = nx.draw_networkx_nodes(G=G, pos=pos, nodelist=repeater_nodes, node_size=150,
+    rep_nodes = nx.draw_networkx_nodes(G=G, pos=pos, nodelist=repeater_nodes, node_size=350,
                                        node_color=[[1, 1, 1]], label="Repeater Node")
     rep_nodes.set_edgecolor('k')
     end_node_labels = {}
@@ -135,6 +132,10 @@ def add_quantum_repeater( G , L_max):
                 node_data['Latitude'] = float(lat3)
                 node_data['Longitude'] = float(lon3)
 
+                if q_node == 42:
+                    print('42222:', i , j , lat1 , lon1 , lat2 , lon2 , length , L_max , dist)
+
+
 
                 q_node_list.append(node_data)
                 q_node_edges.append((node1 , node2))
@@ -160,7 +161,7 @@ def add_quantum_repeater( G , L_max):
                 _compute_dist_lat_lon(G)
     nx.set_node_attributes(G, pos, name='pos')
     print("====================== number of nodes 2 " , G.number_of_nodes() , " ===================================")
-
+    draw_graph(G , [])
 def get_intermediate_point(lat1 , lon1 , lat2 , lon2 , d):
     constant = np.pi / 180
     R = 6371
