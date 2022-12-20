@@ -134,6 +134,7 @@ def check_solution(G , center_nodes , L_max):
     solution_exists = True
     for i , j in unique_end_node_pairs:
         paths = list(nx.all_simple_paths(G, source=i, target=j))
+        paths.sort(key = len)
         # print("for pair:" , i , j , get_distance(i ,j) , len(paths))
 
         feasible_path = None
@@ -141,9 +142,9 @@ def check_solution(G , center_nodes , L_max):
         for path in paths:
             if is_feasible_path(path , center_nodes , L_max):
                 # print("path len" , len(path))
-                if len(path) < path_length:
-                    feasible_path = path
-                    path_length = len(path)
+                feasible_path = path
+                path_length = len(path)
+                break
         if feasible_path is None:
             print("--------------------- !!!!!!!!!!!! NOT feasible !!!!!!!!!! ---------------" )
             solution_exists = False
