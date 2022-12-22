@@ -14,7 +14,7 @@ def main(file_name):
     delta =2 / 15
     G = read_graph_from_gml(file_name)
     print("read from graph done !!")
-    add_quantum_repeater(G , L_max * 7 / 30)
+    add_quantum_repeater(G , L_max * 7 / 15)
     print("add_quantum_repeater done!!")
     compute_shortest_path(G)
 
