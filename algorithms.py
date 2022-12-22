@@ -152,7 +152,7 @@ def check_pairs(G, center_nodes , L_max , unique_end_node_pairs , thread_no):
             break
         pair_no += 1
     if solution_exists:
-        print("*********** solution exists!!!!!!!!!!!!!!")
+        print("*********** solution exists!!!!!!!!!!!!!! in thread:" , thread_no)
         new_node_count = 0
         for node in center_nodes:
             if G.nodes[node]["type"] == "new_repeater_node":
