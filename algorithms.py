@@ -4,6 +4,8 @@ import random
 import itertools
 import threading
 import math
+from multiprocessing import Process
+
 
 
 
@@ -165,7 +167,7 @@ def check_solution(G , center_nodes , L_max):
     end_nodes =  [x for x,y in G.nodes(data=True) if y['type']=="repeater_node"]
     unique_end_node_pairs = list(itertools.combinations(end_nodes, r=2))
     print('len unique_end_node_pairs:' , len(unique_end_node_pairs))
-    no_of_thread = 10
+    no_of_thread = 20
     slice_length = math.ceil(len(unique_end_node_pairs) / no_of_thread)
     print("len of slice:" , slice_length)
     thread_list = list()
@@ -175,7 +177,7 @@ def check_solution(G , center_nodes , L_max):
         if end_index > len(unique_end_node_pairs):
             end_index = len(unique_end_node_pairs)
         sub_list = unique_end_node_pairs[start_index: end_index]
-        t = threading.Thread(target=check_pairs, args=(G, center_nodes, L_max , sub_list , i))
+        t = Process(target=check_pairs, args=(G, center_nodes, L_max , sub_list , i))
         print("running thread:::::: " , i)
         thread_list.append(t)
         t.start()
