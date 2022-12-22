@@ -2,6 +2,9 @@ import networkx as nx
 from graph_tools import shortest_path_dict
 import random
 import itertools
+import threading
+import math
+
 
 
 def compute_center_nodes(G , L_max , delta):
@@ -124,17 +127,11 @@ def is_feasible_path(path , center_nodes , L_max):
     return True
             
             
-
-
-
-def check_solution(G , center_nodes , L_max):
-    end_nodes =  [x for x,y in G.nodes(data=True) if y['type']=="repeater_node"]
-    unique_end_node_pairs = list(itertools.combinations(end_nodes, r=2))
-    print('len unique_end_node_pairs:' , len(unique_end_node_pairs))
-    pair_no = 1
+def check_pairs(G, center_nodes , L_max , unique_end_node_pairs , thread_no):
     solution_exists = True
+    pair_no = 0
     for i , j in unique_end_node_pairs:
-        print("running for pair:" , pair_no)
+        print("running for pair:" , pair_no , "in thread:" , thread_no)
 
         paths = list(nx.all_simple_paths(G, source=i, target=j))
         paths.sort(key = len)
@@ -151,6 +148,7 @@ def check_solution(G , center_nodes , L_max):
         if feasible_path is None:
             print("--------------------- !!!!!!!!!!!! NOT feasible !!!!!!!!!! ---------------" )
             solution_exists = False
+            quit()
             break
         pair_no += 1
     if solution_exists:
@@ -161,6 +159,30 @@ def check_solution(G , center_nodes , L_max):
                 new_node_count += 1
         print("new_node_count:", new_node_count )
         print("total quantum repeater needed:", len(center_nodes) )
+
+
+def check_solution(G , center_nodes , L_max):
+    end_nodes =  [x for x,y in G.nodes(data=True) if y['type']=="repeater_node"]
+    unique_end_node_pairs = list(itertools.combinations(end_nodes, r=2))
+    print('len unique_end_node_pairs:' , len(unique_end_node_pairs))
+    no_of_thread = 10
+    slice_length = math.ceil(len(unique_end_node_pairs) / no_of_thread)
+    print("len of slice:" , slice_length)
+    thread_list = list()
+    for i in range(no_of_thread):
+        start_index = i * slice_length
+        end_index = start_index + slice_length
+        if end_index > len(unique_end_node_pairs):
+            end_index = len(unique_end_node_pairs)
+        sub_list = unique_end_node_pairs[start_index: end_index]
+        t = threading.Thread(target=check_pairs, args=(G, center_nodes, L_max , sub_list , i))
+        print("running thread:::::: " , i)
+        thread_list.append(t)
+        t.start()
+    for t in thread_list:
+        t.join()
+
+    
                 
 
 

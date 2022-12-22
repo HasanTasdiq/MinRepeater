@@ -7,14 +7,14 @@ def solve(G , L_max , delta):
     center_nodes = compute_center_nodes(G , L_max, delta)
     # critical_paths = compute_shortest_path_between_centers(G , center_nodes , L_max)
 
-    draw_graph(G , center_nodes)
+    # draw_graph(G , center_nodes)
 
 def main(file_name):
     L_max = 136
-    delta =7 / 15
+    delta =2 / 15
     G = read_graph_from_gml(file_name)
     print("read from graph done !!")
-    add_quantum_repeater(G , L_max * delta / 2)
+    add_quantum_repeater(G , L_max * 7 / 30)
     print("add_quantum_repeater done!!")
     compute_shortest_path(G)
 

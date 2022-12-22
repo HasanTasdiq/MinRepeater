@@ -161,7 +161,7 @@ def add_quantum_repeater( G , L_max):
                 _compute_dist_lat_lon(G)
     nx.set_node_attributes(G, pos, name='pos')
     print("====================== number of nodes 2 " , G.number_of_nodes() , " ===================================")
-    draw_graph(G , [])
+    # draw_graph(G , [])
 def get_intermediate_point(lat1 , lon1 , lat2 , lon2 , d):
     constant = np.pi / 180
     R = 6371
