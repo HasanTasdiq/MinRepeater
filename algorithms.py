@@ -1,11 +1,15 @@
 import networkx as nx
 from graph_tools import shortest_path_dict
+from util import kill_all
 import random
 import itertools
 import threading
 import math
 from multiprocessing import Process
+import sys
+import os
 
+terminate = False
 
 
 
@@ -129,7 +133,8 @@ def is_feasible_path(path , center_nodes , L_max):
     return True
             
             
-def check_pairs(G, center_nodes , L_max , unique_end_node_pairs , thread_no):
+def check_pairs(G, center_nodes , L_max , unique_end_node_pairs , thread_no ):
+
     solution_exists = True
     pair_no = 0
     for i , j in unique_end_node_pairs:
@@ -137,7 +142,6 @@ def check_pairs(G, center_nodes , L_max , unique_end_node_pairs , thread_no):
 
         paths = list(nx.all_simple_paths(G, source=i, target=j))
         paths.sort(key = len)
-        # print("for pair:" , i , j , get_distance(i ,j) , len(paths))
 
         feasible_path = None
         path_length = 9999
@@ -148,10 +152,9 @@ def check_pairs(G, center_nodes , L_max , unique_end_node_pairs , thread_no):
                 path_length = len(path)
                 break
         if feasible_path is None:
-            print("--------------------- !!!!!!!!!!!! NOT feasible !!!!!!!!!! --------------- in thread: " , thread_no )
+            print("!!!!---------------- !!!!!!!!!!!! NOT feasible !!!!!!!!!! --------------- in thread: " , thread_no )
             solution_exists = False
-            quit()
-            break
+            kill_all()
         pair_no += 1
     if solution_exists:
         print("*********** solution exists!!!!!!!!!!!!!! in thread:" , thread_no)
@@ -177,12 +180,15 @@ def check_solution(G , center_nodes , L_max):
         if end_index > len(unique_end_node_pairs):
             end_index = len(unique_end_node_pairs)
         sub_list = unique_end_node_pairs[start_index: end_index]
-        t = Process(target=check_pairs, args=(G, center_nodes, L_max , sub_list , i))
+        t = Process(target=check_pairs, args=(G, center_nodes, L_max , sub_list , i ))
         print("running thread:::::: " , i)
         thread_list.append(t)
         t.start()
     for t in thread_list:
         t.join()
+    
+
+
 
     
                 

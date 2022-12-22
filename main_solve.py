@@ -11,10 +11,10 @@ def solve(G , L_max , delta):
 
 def main(file_name):
     L_max = 136
-    delta =2 / 15
+    delta =7 / 15
     G = read_graph_from_gml(file_name)
     print("read from graph done !!")
-    add_quantum_repeater(G , L_max * 7 / 15)
+    add_quantum_repeater(G , L_max )
     print("add_quantum_repeater done!!")
     compute_shortest_path(G)
 
@@ -25,8 +25,8 @@ def main(file_name):
 
 if __name__ == "__main__":
     start = time.time()
-    main('es_net.gml')
-    # main('SurfnetCore.gml')
+    # main('es_net.gml')
+    main('SurfnetCore.gml')
     end = time.time()
 
     print("time taken:" , end - start , "sec")
