@@ -122,9 +122,10 @@ def add_quantum_repeater( G , L_max):
             lat2 = G.nodes[j]['Latitude']
             lon2 = G.nodes[j]['Longitude']
             node1 = i
+            placement_dist = length / (int(length / L_max) + 1)
             for it in range(1 ,  int(length / L_max) + 1):
                 node_data = {}
-                dist = it * L_max
+                dist = it * placement_dist
                 lat3 , lon3 = get_intermediate_point(lat1 , lon1 , lat2 , lon2 , dist)
                 print(i , it ,"QN", q_node , lon3 , lat3   , dist)
                 print("calculated distance:" , get_distance_long_lat(lat1 , lon1 , lat3 , lon3))
@@ -133,8 +134,8 @@ def add_quantum_repeater( G , L_max):
                 node_data['Latitude'] = float(lat3)
                 node_data['Longitude'] = float(lon3)
 
-                # if q_node == 0:
-                #     print('42222:', i , j , lat1 , lon1 , lat2 , lon2 , length , L_max , dist)
+                if q_node == 309 or q_node == 310:
+                    print('300000000000000000000', i , j , lat1 , lon1 , lat2 , lon2 , length , L_max , dist)
 
 
 
