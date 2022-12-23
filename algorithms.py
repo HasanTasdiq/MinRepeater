@@ -45,8 +45,8 @@ def compute_center_nodes(G , L_max , delta):
                     continue
                 dist = get_distance(c_node , node)
                 # adding weight
-                if G.nodes[node]["type"] == "new_repeater_node":
-                    dist = dist * .7
+                # if G.nodes[node]["type"] == "new_repeater_node":
+                #     dist = dist * .7
                 if dist > max_len:
                     max_len = dist
                     chosen_center = node
@@ -121,15 +121,21 @@ def compute_shortest_path_between_centers(G , center_nodes , L_max):
                     shortest_path_between_centers.append((i , j , sp))
     print('len of crit path set' , len(shortest_path_between_centers))
 def is_feasible_path(path , center_nodes , L_max):
+    print(path)
     first_node_of_link = path[0]
     current_node = None
     for i in range(1 , len(path) - 1):
         current_node = path[i]
         if current_node in center_nodes:
             dist = get_distance(first_node_of_link , current_node)
+            print(first_node_of_link , current_node , dist)
             if dist >= L_max:
                 return False
             first_node_of_link = current_node
+    las_node_of_link = path[-1]
+    dist = get_distance(first_node_of_link , las_node_of_link)
+    if dist >= L_max:
+        return False
     return True
             
             
@@ -138,7 +144,7 @@ def check_pairs(G, center_nodes , L_max , unique_end_node_pairs , thread_no ):
     solution_exists = True
     pair_no = 0
     for i , j in unique_end_node_pairs:
-        print("running for pair:" , pair_no , "in thread:" , thread_no)
+        print("running for pair:" , pair_no , i , j , "in thread:" , thread_no)
 
         paths = list(nx.all_simple_paths(G, source=i, target=j))
         paths.sort(key = len)
@@ -146,6 +152,7 @@ def check_pairs(G, center_nodes , L_max , unique_end_node_pairs , thread_no ):
         feasible_path = None
         path_length = 9999
         for path in paths:
+            # print(path)
             if is_feasible_path(path , center_nodes , L_max):
                 # print("path len" , len(path))
                 feasible_path = path
@@ -170,7 +177,7 @@ def check_solution(G , center_nodes , L_max):
     end_nodes =  [x for x,y in G.nodes(data=True) if y['type']=="repeater_node"]
     unique_end_node_pairs = list(itertools.combinations(end_nodes, r=2))
     print('len unique_end_node_pairs:' , len(unique_end_node_pairs))
-    no_of_thread = 60
+    no_of_thread = 1
     slice_length = math.ceil(len(unique_end_node_pairs) / no_of_thread)
     print("len of slice:" , slice_length)
     thread_list = list()
