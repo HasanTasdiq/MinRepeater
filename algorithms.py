@@ -121,14 +121,14 @@ def compute_shortest_path_between_centers(G , center_nodes , L_max):
                     shortest_path_between_centers.append((i , j , sp))
     print('len of crit path set' , len(shortest_path_between_centers))
 def is_feasible_path(path , center_nodes , L_max):
-    print(path)
+    
     first_node_of_link = path[0]
     current_node = None
     for i in range(1 , len(path) - 1):
         current_node = path[i]
         if current_node in center_nodes:
             dist = get_distance(first_node_of_link , current_node)
-            print(first_node_of_link , current_node , dist)
+            # print(first_node_of_link , current_node , dist)
             if dist >= L_max:
                 return False
             first_node_of_link = current_node
@@ -177,7 +177,7 @@ def check_solution(G , center_nodes , L_max):
     end_nodes =  [x for x,y in G.nodes(data=True) if y['type']=="repeater_node"]
     unique_end_node_pairs = list(itertools.combinations(end_nodes, r=2))
     print('len unique_end_node_pairs:' , len(unique_end_node_pairs))
-    no_of_thread = 1
+    no_of_thread = 60
     slice_length = math.ceil(len(unique_end_node_pairs) / no_of_thread)
     print("len of slice:" , slice_length)
     thread_list = list()

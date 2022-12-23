@@ -126,14 +126,14 @@ def add_quantum_repeater( G , L_max):
                 node_data = {}
                 dist = it * L_max
                 lat3 , lon3 = get_intermediate_point(lat1 , lon1 , lat2 , lon2 , dist)
-                print(i , it ,"QN", q_node , lon3 , lat3   , dist)
+                # print(i , it ,"QN", q_node , lon3 , lat3   , dist)
                 node2 = "QN" +str(q_node) 
                 node_data['node'] = node2
                 node_data['Latitude'] = float(lat3)
                 node_data['Longitude'] = float(lon3)
 
-                if q_node == 0:
-                    print('42222:', i , j , lat1 , lon1 , lat2 , lon2 , length , L_max , dist)
+                # if q_node == 0:
+                #     print('42222:', i , j , lat1 , lon1 , lat2 , lon2 , length , L_max , dist)
 
 
 
