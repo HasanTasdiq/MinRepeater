@@ -43,6 +43,8 @@ def compute_center_nodes(G , L_max , delta):
                 if node in temp_list:
                     # print("yes in temp")
                     continue
+                if G.degree[node] <=1:
+                    continue
                 dist = get_distance(c_node , node)
                 # adding weight
                 # if G.nodes[node]["type"] == "new_repeater_node":
@@ -129,8 +131,8 @@ def is_feasible_path(path , center_nodes , L_max):
         if current_node in center_nodes:
             dist = get_distance(first_node_of_link , current_node)
             if dist >= L_max:
-                print(first_node_of_link , current_node , dist)
-                print(path)
+                # print(first_node_of_link , current_node , dist)
+                # print(path)
                 return False
             first_node_of_link = current_node
     last_node_of_link = path[-1]

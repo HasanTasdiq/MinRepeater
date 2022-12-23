@@ -134,7 +134,7 @@ def add_quantum_repeater( G , L_max):
                 node_data['Latitude'] = float(lat3)
                 node_data['Longitude'] = float(lon3)
 
-                if q_node == 309 or q_node == 310:
+                if q_node == 279 or q_node == 304:
                     print('300000000000000000000', i , j , lat1 , lon1 , lat2 , lon2 , length , L_max , dist)
 
 
