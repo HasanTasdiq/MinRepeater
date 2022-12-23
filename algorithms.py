@@ -163,6 +163,7 @@ def check_pairs(G, center_nodes , L_max , unique_end_node_pairs , thread_no ):
                 break
         if feasible_path is None:
             print("!!!!---------------- !!!!!!!!!!!! NOT feasible !!!!!!!!!! --------------- in thread: " , thread_no )
+            print(path)
             solution_exists = False
             kill_all()
         pair_no += 1
