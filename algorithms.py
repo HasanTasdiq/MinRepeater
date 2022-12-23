@@ -128,12 +128,13 @@ def is_feasible_path(path , center_nodes , L_max):
         current_node = path[i]
         if current_node in center_nodes:
             dist = get_distance(first_node_of_link , current_node)
-            # print(first_node_of_link , current_node , dist)
             if dist >= L_max:
+                print(first_node_of_link , current_node , dist)
+                print(path)
                 return False
             first_node_of_link = current_node
-    las_node_of_link = path[-1]
-    dist = get_distance(first_node_of_link , las_node_of_link)
+    last_node_of_link = path[-1]
+    dist = get_distance(first_node_of_link , last_node_of_link)
     if dist >= L_max:
         return False
     return True
@@ -177,7 +178,7 @@ def check_solution(G , center_nodes , L_max):
     end_nodes =  [x for x,y in G.nodes(data=True) if y['type']=="repeater_node"]
     unique_end_node_pairs = list(itertools.combinations(end_nodes, r=2))
     print('len unique_end_node_pairs:' , len(unique_end_node_pairs))
-    no_of_thread = 60
+    no_of_thread = 5
     slice_length = math.ceil(len(unique_end_node_pairs) / no_of_thread)
     print("len of slice:" , slice_length)
     thread_list = list()
