@@ -131,8 +131,8 @@ def is_feasible_path(path , center_nodes , L_max):
         if current_node in center_nodes:
             dist = get_distance(first_node_of_link , current_node)
             if dist >= L_max:
-                # print(first_node_of_link , current_node , dist)
-                # print(path)
+                print(first_node_of_link , current_node , dist)
+                print(path)
                 return False
             first_node_of_link = current_node
     last_node_of_link = path[-1]
@@ -163,7 +163,7 @@ def check_pairs(G, center_nodes , L_max , unique_end_node_pairs , thread_no ):
                 break
         if feasible_path is None:
             print("!!!!---------------- !!!!!!!!!!!! NOT feasible !!!!!!!!!! --------------- in thread: " , thread_no )
-            print(path)
+            # print(path)
             solution_exists = False
             kill_all()
         pair_no += 1
