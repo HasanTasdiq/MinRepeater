@@ -126,7 +126,8 @@ def add_quantum_repeater( G , L_max):
                 node_data = {}
                 dist = it * L_max
                 lat3 , lon3 = get_intermediate_point(lat1 , lon1 , lat2 , lon2 , dist)
-                # print(i , it ,"QN", q_node , lon3 , lat3   , dist)
+                print(i , it ,"QN", q_node , lon3 , lat3   , dist)
+                print("calculated distance:" , get_distance_long_lat(lat1 , lon1 , lat3 , lon3))
                 node2 = "QN" +str(q_node) 
                 node_data['node'] = node2
                 node_data['Latitude'] = float(lat3)
@@ -187,3 +188,15 @@ def get_intermediate_point(lat1 , lon1 , lat2 , lon2 , d):
     return np.round(φ3/constant , 2) , np.round(λ3/constant , 2)
 
 
+def get_distance_long_lat(lat1 , lon1 , lat2 , lon2):
+    R = 6371   #in km 
+    lon1 = np.radians(lon1)
+    lon2 = np.radians(lon2)
+    lat1 = np.radians(lat1)
+    lat2 = np.radians(lat2)
+    delta_lat = lat2 - lat1
+    delta_lon = lon2 - lon1
+    a = np.sin(delta_lat / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * (np.sin(delta_lon / 2) ** 2)
+    c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a))
+    dist = np.round(R * c, 5)
+    return dist
