@@ -23,7 +23,7 @@ def compute_center_nodes(G , L_max , delta):
     # initial_center_node = nodes[random.randint(0, len(nodes) - 1)]
     initial_center_node = None
     for node in nodes:
-        if G.edges(node) > 1:
+        if G.degree[node] > 1:
             initial_center_node = node
             break
     print('init center:', initial_center_node)
