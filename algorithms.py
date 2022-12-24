@@ -106,7 +106,7 @@ def get_far_node_from_all_center(center_nodes , temp_list):
 def remove_nodes_inside_circle(center , nodes , radius):
     nodes_inside_circle = []
     for node in nodes:
-        if get_distance(node , center) < radius:
+        if get_distance(node , center) <= radius:
             nodes_inside_circle.append(node)
     
     for node in nodes_inside_circle:
@@ -131,8 +131,8 @@ def is_feasible_path(path , center_nodes , L_max):
         if current_node in center_nodes:
             dist = get_distance(first_node_of_link , current_node)
             if dist >= L_max:
-                print(first_node_of_link , current_node , dist)
-                print(path)
+                # print(first_node_of_link , current_node , dist)
+                # print(path)
                 return False
             first_node_of_link = current_node
     last_node_of_link = path[-1]

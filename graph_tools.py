@@ -162,6 +162,8 @@ def add_quantum_repeater( G , L_max):
         if 'length' not in G[i][j]:
                 _compute_dist_lat_lon(G)
     nx.set_node_attributes(G, pos, name='pos')
+    for i , j in G.edges('WASH'):
+        print('***************' , i , j , G[i][j]['length'])
     print("====================== number of nodes 2 " , G.number_of_nodes() , " ===================================")
     # draw_graph(G , [])
 def get_intermediate_point(lat1 , lon1 , lat2 , lon2 , d):
