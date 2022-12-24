@@ -11,10 +11,10 @@ def solve(G , L_max , delta):
 
 def main(file_name):
     L_max = 130
-    delta =7/ 15
+    delta =2/ 15
     G = read_graph_from_gml(file_name)
     print("read from graph done !!")
-    add_quantum_repeater(G , L_max * delta  )
+    add_quantum_repeater(G , L_max * 11 / 15  )
     print("add_quantum_repeater done!!")
     compute_shortest_path(G)
 
