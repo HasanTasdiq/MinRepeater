@@ -21,7 +21,12 @@ def compute_center_nodes(G , L_max , delta):
     nodes = list(G.nodes())
     # print("len of nodes " , len(nodes))
     # initial_center_node = nodes[random.randint(0, len(nodes) - 1)]
-    initial_center_node = nodes[0]
+    initial_center_node = None
+    for node in nodes:
+        if G.edges(node) > 1:
+            initial_center_node = node
+            break
+    print('init center:', initial_center_node)
     center_nodes.add(initial_center_node)
     nodes.remove(initial_center_node)
 
@@ -130,14 +135,14 @@ def is_feasible_path(path , center_nodes , L_max):
         current_node = path[i]
         if current_node in center_nodes:
             dist = get_distance(first_node_of_link , current_node)
-            if dist >= L_max:
-                # print(first_node_of_link , current_node , dist)
-                # print(path)
+            if dist > L_max:
+                print(first_node_of_link , current_node , dist)
+                print(path)
                 return False
             first_node_of_link = current_node
     last_node_of_link = path[-1]
     dist = get_distance(first_node_of_link , last_node_of_link)
-    if dist >= L_max:
+    if dist > L_max:
         return False
     return True
             
