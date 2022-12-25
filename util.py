@@ -1,6 +1,7 @@
 import psutil
 import os
-from algorithms import no_of_thread
+import algorithms 
+no_of_thread = algorithms.no_of_thread
 
 def kill_processes(pid):
     parent = psutil.Process(pid)
@@ -14,6 +15,7 @@ def kill_all():
     kill_processes(pid)
 
 def calculate_output():
+    global no_of_thread
     out_set = set()
     for thread_no in range(0 , no_of_thread):
         fo = open("center/chosen_" + thread_no +".txt", "r")
