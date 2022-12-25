@@ -21,5 +21,6 @@ def calculate_output():
         for line in lines:
             elements = line.split(" ") 
             out_set.update(elements)
+        fo.close()
     
     print("total repeater chosen:" , len(out_set))
