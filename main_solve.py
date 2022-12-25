@@ -1,6 +1,7 @@
 
 from graph_tools import draw_graph, read_graph_from_gml , compute_shortest_path , add_quantum_repeater
 from algorithms import compute_center_nodes , compute_shortest_path_between_centers
+from util import calculate_output
 import time
 
 def solve(G , L_max , delta):
@@ -26,6 +27,7 @@ def main(file_name):
 if __name__ == "__main__":
     start = time.time()
     main('es_net.gml')
+    calculate_output()
     # main('custom.gml')
     end = time.time()
 

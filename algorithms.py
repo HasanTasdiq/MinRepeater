@@ -10,6 +10,7 @@ import sys
 import os
 
 terminate = False
+no_of_thread = 60
 
 
 
@@ -144,6 +145,7 @@ def is_feasible_path(path , center_nodes , L_max):
     dist = get_distance(first_node_of_link , last_node_of_link)
     if dist > L_max:
         return False
+    
     return True
             
             
@@ -164,6 +166,7 @@ def check_pairs(G, center_nodes , L_max , unique_end_node_pairs , thread_no ):
             if is_feasible_path(path , center_nodes , L_max):
                 # print("path len" , len(path))
                 feasible_path = path
+                put_in_file(path , thread_no)
                 path_length = len(path)
                 break
         if feasible_path is None:
@@ -186,7 +189,7 @@ def check_solution(G , center_nodes , L_max):
     end_nodes =  [x for x,y in G.nodes(data=True) if y['type']=="repeater_node"]
     unique_end_node_pairs = list(itertools.combinations(end_nodes, r=2))
     print('len unique_end_node_pairs:' , len(unique_end_node_pairs))
-    no_of_thread = 60
+    global no_of_thread
     slice_length = math.ceil(len(unique_end_node_pairs) / no_of_thread)
     print("len of slice:" , slice_length)
     thread_list = list()
@@ -203,7 +206,15 @@ def check_solution(G , center_nodes , L_max):
     for t in thread_list:
         t.join()
     
-
+def put_in_file(path , center_nodes , thread_no):
+    f = open("center/chosen_" + thread_no +".txt", "w")
+    center_str = ""
+    for node in path:
+        if node in center_nodes:
+            center_str += node + " "
+    
+    f.write(center_str)
+    f.close()
 
 
     
