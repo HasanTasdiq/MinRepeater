@@ -165,7 +165,7 @@ def check_pairs(G, center_nodes , L_max , unique_end_node_pairs , thread_no ):
             if is_feasible_path(path , center_nodes , L_max):
                 # print("path len" , len(path))
                 feasible_path = path
-                put_in_file(path , thread_no)
+                put_in_file(path , center_nodes ,  thread_no)
                 path_length = len(path)
                 break
         if feasible_path is None:
