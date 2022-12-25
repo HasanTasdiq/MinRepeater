@@ -1,7 +1,6 @@
 import psutil
 import os
-import algorithms 
-no_of_thread = algorithms.no_of_thread
+no_of_thread = 60
 
 def kill_processes(pid):
     parent = psutil.Process(pid)

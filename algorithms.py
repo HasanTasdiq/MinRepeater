@@ -1,6 +1,6 @@
 import networkx as nx
 from graph_tools import shortest_path_dict
-from util import kill_all
+from util import kill_all , no_of_thread
 import random
 import itertools
 import threading
@@ -10,7 +10,6 @@ import sys
 import os
 
 terminate = False
-no_of_thread = 60
 
 
 
