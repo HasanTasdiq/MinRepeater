@@ -17,7 +17,7 @@ def calculate_output():
     global no_of_thread
     out_set = set()
     for thread_no in range(0 , no_of_thread):
-        fo = open("center/chosen_" + thread_no +".txt", "r")
+        fo = open("center/chosen_" + str(thread_no) +".txt", "r")
         lines = fo.readlines()
         for line in lines:
             elements = line.split(" ") 

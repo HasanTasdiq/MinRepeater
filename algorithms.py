@@ -206,7 +206,7 @@ def check_solution(G , center_nodes , L_max):
         t.join()
     
 def put_in_file(path , center_nodes , thread_no):
-    f = open("center/chosen_" + thread_no +".txt", "w")
+    f = open("center/chosen_" + str(thread_no) +".txt", "w")
     center_str = ""
     for node in path:
         if node in center_nodes:
