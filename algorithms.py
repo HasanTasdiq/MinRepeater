@@ -212,7 +212,7 @@ def put_in_file(path , center_nodes , thread_no):
         if node in center_nodes:
             center_str += node + " "
     
-    f.write(center_str)
+    f.write(center_str[:-1])
     f.close()
 
 
