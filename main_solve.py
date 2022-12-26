@@ -21,13 +21,15 @@ def main(file_name):
 
     print("compute_shortest_path done!!")
     solve(G , L_max , delta)
+    print("calculating output")
+
+    calculate_output(G)
     
 
 
 if __name__ == "__main__":
     start = time.time()
     main('es_net.gml')
-    calculate_output()
     # main('custom.gml')
     end = time.time()
 
