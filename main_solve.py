@@ -1,5 +1,5 @@
 
-from graph_tools import draw_graph, read_graph_from_gml , compute_shortest_path , add_quantum_repeater
+from graph_tools import draw_graph, read_graph_from_gml , compute_shortest_path , add_quantum_repeater_between_centers
 from algorithms import compute_center_nodes , compute_shortest_path_between_centers , check_solution
 from util import calculate_output
 import time
@@ -7,8 +7,9 @@ import time
 def solve(G , L_max , delta):
     center_nodes = compute_center_nodes(G , L_max, delta)
     print("len of c " , len(center_nodes))
-    # add_quantum_repeater(G , L_max * 14 / 15  )
-    # check_solution(G , center_nodes , L_max)
+    add_quantum_repeater_between_centers(G , center_nodes , L_max * .9   )
+    compute_shortest_path(G)
+    check_solution(G , center_nodes , L_max)
 
     # critical_paths = compute_shortest_path_between_centers(G , center_nodes , L_max)
 

@@ -36,6 +36,19 @@ def read_graph_from_gml(file):
     nx.set_node_attributes(G, pos, name='pos')
 
     return G
+def get_distance_between_nodes(G , node1 , node2):
+    R = 6371  # Radius of the earth in km
+    lon1 = np.radians(graph.nodes[node1]['Longitude'])
+    lon2 = np.radians(graph.nodes[node2]['Longitude'])
+    lat1 = np.radians(graph.nodes[node1]['Latitude'])
+    lat2 = np.radians(graph.nodes[node2]['Latitude'])
+    delta_lat = lat2 - lat1
+    delta_lon = lon2 - lon1
+    a = np.sin(delta_lat / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * (np.sin(delta_lon / 2) ** 2)
+    c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a))
+    dist = np.round(R * c, 5)
+    return dist
+    
 
 def _compute_dist_lat_lon(graph):
     """Compute the distance in km between two points based on their latitude and longitude.
@@ -166,6 +179,75 @@ def add_quantum_repeater( G , L_max):
         print('***************' , i , j , G[i][j]['length'])
     print("====================== number of nodes 2 " , G.number_of_nodes() , " ===================================")
     # draw_graph(G , [])
+
+
+
+
+def add_quantum_repeater_between_centers( G , center_nodes , L_max):
+    print("====================== number of nodes 1 " , G.number_of_nodes() , " ===================================")
+
+    q_node  = 0
+    q_node_list = []
+    q_node_edges = []
+    pos = nx.get_node_attributes(G, 'pos')
+    done_dest_node = {}
+    removable_edge = []
+       
+    for i, j in G.edges():
+        if i not in center_nodes or j not in center_nodes:
+            continue
+
+        length = G[i][j]['length']
+            
+        if length > L_max :
+            lat1 = G.nodes[i]['Latitude']
+            lon1 = G.nodes[i]['Longitude']
+            lat2 = G.nodes[j]['Latitude']
+            lon2 = G.nodes[j]['Longitude']
+            node1 = i
+            placement_dist = length / (int(length / L_max) + 1)
+            for it in range(1 ,  int(length / L_max) + 1):
+                node_data = {}
+                dist = it * placement_dist
+                lat3 , lon3 = get_intermediate_point(lat1 , lon1 , lat2 , lon2 , dist)
+                print(i , it ,"QN", q_node , lon3 , lat3   , dist)
+                print("calculated distance:" , get_distance_long_lat(lat1 , lon1 , lat3 , lon3))
+                node2 = "QN" +str(q_node) 
+                node_data['node'] = node2
+                node_data['Latitude'] = float(lat3)
+                node_data['Longitude'] = float(lon3)
+
+                if q_node == 279 or q_node == 304:
+                    print('300000000000000000000', i , j , lat1 , lon1 , lat2 , lon2 , length , L_max , dist)
+
+
+
+                q_node_list.append(node_data)
+                q_node_edges.append((node1 , node2))
+                node1 = node2
+                q_node += 1
+            q_node_edges.append((node2 , j))
+            done_dest_node[j] = 1
+            removable_edge.append((i, j))
+            # print('== ' , i , '-' , j)
+    
+
+    for node_data in q_node_list:
+        G.add_node(node_data['node'], Longitude=node_data['Longitude'] , Latitude=node_data['Latitude'])
+        G.nodes[node_data['node']]['type'] = 'new_repeater_node'
+        pos[node_data['node']] = [node_data['Longitude'], node_data['Latitude']]
+        # add new nodes as center nodes
+        center_nodes.append(node_data['node'])
+    for i , j in removable_edge:
+        # print(i , '-' , j)
+        G.remove_edge(i , j)
+
+    G.add_edges_from(q_node_edges)
+    for i, j in G.edges():
+        if 'length' not in G[i][j]:
+                _compute_dist_lat_lon(G)
+    nx.set_node_attributes(G, pos, name='pos')
+    print("====================== number of nodes 2 " , G.number_of_nodes() , " ===================================")
 def get_intermediate_point(lat1 , lon1 , lat2 , lon2 , d):
     constant = np.pi / 180
     R = 6371
