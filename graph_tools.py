@@ -237,7 +237,7 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
         G.nodes[node_data['node']]['type'] = 'new_repeater_node'
         pos[node_data['node']] = [node_data['Longitude'], node_data['Latitude']]
         # add new nodes as center nodes
-        center_nodes.append(node_data['node'])
+        center_nodes.add(node_data['node'])
     for i , j in removable_edge:
         # print(i , '-' , j)
         G.remove_edge(i , j)
