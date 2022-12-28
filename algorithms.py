@@ -1,5 +1,5 @@
 import networkx as nx
-from graph_tools import shortest_path_dict , get_distance_between_nodes
+from graph_tools import shortest_path_dict , get_distance_between_nodes, get_distance 
 from util import kill_all , no_of_thread , get_nearest_node
 import random
 import itertools
@@ -88,14 +88,7 @@ def compute_center_nodes(G , L_max , delta):
     # print("==== t d " , t_d)
     return center_nodes
 
-def get_distance(node1 , node2 ):
-    dist = -1
-    if (node1 , node2) in shortest_path_dict:
-        dist = shortest_path_dict[(node1 , node2)][0]
-    elif (node2 , node1) in shortest_path_dict:
-        dist = shortest_path_dict[(node2 , node1)][0]
 
-    return dist
 
 def get_far_node_from_all_center(center_nodes , temp_list):
     prev_dist = 0

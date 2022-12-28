@@ -194,10 +194,19 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
     removable_edge = []
        
     for i, j in G.edges():
-        if i not in center_nodes or j not in center_nodes:
-            continue
+        length1 = 0
+        length2 = 0
+        if i not in center_nodes:
+            center1 = get_nearest_center(G , i , center_nodes , L_max)
+            length1 = get_distance(i , center1)
+        if j not in center_nodes:
+            center2 = get_nearest_center(G, j , center_nodes , L_max)
+            length2 = get_distance(j , center2)
+        
+        
 
-        length = G[i][j]['length']
+        length = G[i][j]['length'] + length1 + length2
+
             
         if length > L_max :
             lat1 = G.nodes[i]['Latitude']
@@ -209,6 +218,12 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
             for it in range(1 ,  int(length / L_max) + 1):
                 node_data = {}
                 dist = it * placement_dist
+                if it == 1:
+                    if dist <= get_distance(center1 , i):
+                        center_nodes.add(j)
+                        continue
+                    dist = dist - length1
+                    
                 lat3 , lon3 = get_intermediate_point(lat1 , lon1 , lat2 , lon2 , dist)
                 print(i , it ,"QN", q_node , lon3 , lat3   , dist)
                 print("calculated distance:" , get_distance_long_lat(lat1 , lon1 , lat3 , lon3))
@@ -220,7 +235,10 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
                 if q_node == 279 or q_node == 304:
                     print('300000000000000000000', i , j , lat1 , lon1 , lat2 , lon2 , length , L_max , dist)
 
-
+                if dist >= get_distance(node1 , j):
+                    node2 = node1
+                    center_nodes.add(j)
+                    continue
 
                 q_node_list.append(node_data)
                 q_node_edges.append((node1 , node2))
@@ -285,3 +303,19 @@ def get_distance_long_lat(lat1 , lon1 , lat2 , lon2):
     c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a))
     dist = np.round(R * c, 5)
     return dist
+def get_distance(node1 , node2 ):
+    dist = -1
+    if (node1 , node2) in shortest_path_dict:
+        dist = shortest_path_dict[(node1 , node2)][0]
+    elif (node2 , node1) in shortest_path_dict:
+        dist = shortest_path_dict[(node2 , node1)][0]
+
+    return dist
+
+def get_nearest_center(G , node , center_nodes , L_max):
+    for i in range(1 , 10):
+        length = nx.single_source_shortest_path_length(G ,source=node, cutoff=i)
+        for n in length:
+            if n!=node:
+                if n in center_nodes and get_distance(node , n) <= L_max:
+                    return n
