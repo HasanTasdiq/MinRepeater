@@ -196,12 +196,16 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
     for i, j in G.edges():
         length1 = 0
         length2 = 0
+        center1 = None
+        center2 = None
         if i not in center_nodes:
             center1 = get_nearest_center(G , i , center_nodes , L_max)
             length1 = get_distance(i , center1)
         if j not in center_nodes:
             center2 = get_nearest_center(G, j , center_nodes , L_max)
             length2 = get_distance(j , center2)
+        if center1 != None and center1 == center2:
+            continue
         
         
 
@@ -216,24 +220,28 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
             node1 = i
             placement_dist = length / (int(length / L_max) + 1)
             for it in range(1 ,  int(length / L_max) + 1):
+
                 node_data = {}
                 dist = it * placement_dist
                 if it == 1:
+                    if i == 'LBNL' or j == 'LBNL':
+                        print('@@@@@@@@@@@@@@@@' , i , j , center1 , 'center2:' , center2 , get_distance(center1 , i) , length1 , length2 , G[i][j]['length'])
                     if dist <= get_distance(center1 , i):
                         center_nodes.add(j)
                         continue
                     dist = dist - length1
                     
                 lat3 , lon3 = get_intermediate_point(lat1 , lon1 , lat2 , lon2 , dist)
-                print(i , it ,"QN", q_node , lon3 , lat3   , dist)
-                print("calculated distance:" , get_distance_long_lat(lat1 , lon1 , lat3 , lon3))
+
                 node2 = "QN" +str(q_node) 
                 node_data['node'] = node2
                 node_data['Latitude'] = float(lat3)
                 node_data['Longitude'] = float(lon3)
 
-                if q_node == 279 or q_node == 304:
+                if i == 'LBNL' or j == 'LBNL':
                     print('300000000000000000000', i , j , lat1 , lon1 , lat2 , lon2 , length , L_max , dist)
+                    print(i , it ,"QN", q_node , lon3 , lat3   , dist)
+                    print("calculated distance:" , get_distance_long_lat(lat1 , lon1 , lat3 , lon3))
 
                 if dist >= get_distance(node1 , j):
                     node2 = node1
@@ -319,3 +327,4 @@ def get_nearest_center(G , node , center_nodes , L_max):
             if n!=node:
                 if n in center_nodes and get_distance(node , n) <= L_max:
                     return n
+    return None

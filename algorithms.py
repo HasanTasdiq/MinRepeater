@@ -51,8 +51,8 @@ def compute_center_nodes(G , L_max , delta):
                 if G.degree[node] <=1:
                     nearest_node = get_nearest_node(G , node)
                     d = get_distance(node , nearest_node)
-                    if len(center_nodes) == 1:
-                        print(node , nearest_node , d)
+                    # if len(center_nodes) == 1:
+                    #     print(node , nearest_node , d)
                     if d <= L_max * delta :
                         continue
                 dist = get_distance(c_node , node)
