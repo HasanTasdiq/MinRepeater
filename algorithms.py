@@ -1,6 +1,6 @@
 import networkx as nx
 from graph_tools import shortest_path_dict
-from util import kill_all , no_of_thread
+from util import kill_all , no_of_thread , get_nearest_node
 import random
 import itertools
 import threading
@@ -20,12 +20,12 @@ def compute_center_nodes(G , L_max , delta):
     center_nodes = set()
     nodes = list(G.nodes())
     # print("len of nodes " , len(nodes))
-    # initial_center_node = nodes[random.randint(0, len(nodes) - 1)]
-    initial_center_node = None
-    for node in nodes:
-        if G.degree[node] > 1:
-            initial_center_node = node
-            break
+    initial_center_node = nodes[random.randint(0, len(nodes) - 1)]
+    # initial_center_node = None
+    # for node in nodes:
+    #     if G.degree[node] > 1:
+    #         initial_center_node = node
+    #         break
     print('init center:', initial_center_node)
     center_nodes.add(initial_center_node)
     nodes.remove(initial_center_node)
@@ -49,7 +49,12 @@ def compute_center_nodes(G , L_max , delta):
                     # print("yes in temp")
                     continue
                 if G.degree[node] <=1:
-                    continue
+                    nearest_node = get_nearest_node(G , node)
+                    d = get_distance(node , nearest_node)
+                    if len(center_nodes) == 1:
+                        print(node , nearest_node , d)
+                    if d <= L_max * delta :
+                        continue
                 dist = get_distance(c_node , node)
                 # adding weight
                 # if G.nodes[node]["type"] == "new_repeater_node":
@@ -81,7 +86,6 @@ def compute_center_nodes(G , L_max , delta):
     print('center_nodes len' , len(center_nodes))
 
     # print("==== t d " , t_d)
-    check_solution(G , center_nodes , L_max)
     return center_nodes
 
 def get_distance(node1 , node2 ):
