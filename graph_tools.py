@@ -204,6 +204,7 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
         if j not in center_nodes:
             center2 = get_nearest_center(G, j , center_nodes , L_max)
             length2 = get_distance(j , center2)
+
         if center1 != None and center1 == center2:
             continue
         
@@ -224,10 +225,10 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
                 node_data = {}
                 dist = it * placement_dist
                 if it == 1:
-                    if i == 'LBNL' or j == 'LBNL':
-                        print('@@@@@@@@@@@@@@@@' , i , j , center1 , 'center2:' , center2 , get_distance(center1 , i) , length1 , length2 , G[i][j]['length'])
+                    if i == 'BOST' or  i == 'JLAB' or j == 'BOST' or j == 'JLAB':
+                        print('**@@@@@@@@@@@@@@@@' , i , j , center1 , 'center2:' , center2 , get_distance(center1 , i) , length1 , length2 , G[i][j]['length'])
                     if dist <= get_distance(center1 , i):
-                        center_nodes.add(j)
+                        center_nodes.add(i)
                         continue
                     dist = dist - length1
                     
