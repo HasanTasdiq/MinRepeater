@@ -20,24 +20,28 @@ def compute_center_nodes(G , L_max , delta):
     center_nodes = set()
     nodes = list(G.nodes())
     # print("len of nodes " , len(nodes))
-    initial_center_node = nodes[random.randint(0, len(nodes) - 1)]
     # initial_center_node = None
     # for node in nodes:
     #     if G.degree[node] > 1:
     #         initial_center_node = node
     #         break
-    print('init center:', initial_center_node)
-    center_nodes.add(initial_center_node)
+
     # nodes.remove(initial_center_node)
 
 
 
     compute_mandatory_centers(G , center_nodes , L_max)
 
+    if len(center_nodes) <= 1:
+        initial_center_node = nodes[random.randint(0, len(nodes) - 1)]
+        print('init center:', initial_center_node)
+        center_nodes.add(initial_center_node)
+
     for c in center_nodes:
         if c in nodes:
             nodes.remove(c)
         remove_nodes_inside_circle(c , nodes , L_max*delta)
+    skip_end_nodes(G , nodes)
 
     max_len = L_max * delta
     while max_len >= L_max * delta:
@@ -118,7 +122,12 @@ def compute_mandatory_centers(G , center_nodes , L_max):
         if node_mandatory_for_end_nodes(G , end_nodes , L_max):
             center_nodes.add(node)
     print('&&&&&&&&& mandatory ' , center_nodes)
-
+    
+def skip_end_nodes(G , nodes):
+    for node in G.nodes():
+        if G.degree(node) == 1:
+            if node in nodes:
+                nodes.remove(node)
 
 def get_far_node_from_all_center(center_nodes , temp_list):
     prev_dist = 0
