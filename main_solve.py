@@ -7,7 +7,7 @@ import time
 def solve(G , L_max , delta):
     center_nodes = compute_center_nodes(G , L_max, delta)
     print("len of c " , len(center_nodes))
-    add_quantum_repeater_between_centers(G , center_nodes , L_max * .9   )
+    add_quantum_repeater_between_centers(G , center_nodes , L_max * .95   )
     compute_shortest_path(G)
     check_solution(G , center_nodes , L_max)
 
