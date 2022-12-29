@@ -239,12 +239,16 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
                 node_data['Latitude'] = float(lat3)
                 node_data['Longitude'] = float(lon3)
 
-                if i == 'LBNL' or j == 'LBNL':
+                # if i == 'LBNL' or j == 'LBNL':
+                #     print('300000000000000000000', i , j , lat1 , lon1 , lat2 , lon2 , length , L_max , dist)
+                #     print(i , it ,"QN", q_node , lon3 , lat3   , dist)
+                #     print("calculated distance:" , get_distance_long_lat(lat1 , lon1 , lat3 , lon3))
+                if q_node == 62:
                     print('300000000000000000000', i , j , lat1 , lon1 , lat2 , lon2 , length , L_max , dist)
                     print(i , it ,"QN", q_node , lon3 , lat3   , dist)
                     print("calculated distance:" , get_distance_long_lat(lat1 , lon1 , lat3 , lon3))
-
-                if dist >= get_distance(node1 , j):
+                    print('get_distance(node1 , j)' , get_distance(node1 , j))
+                if placement_dist >= get_distance(node1 , j):
                     node2 = node1
                     center_nodes.add(j)
                     continue
