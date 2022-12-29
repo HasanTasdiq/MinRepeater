@@ -11,6 +11,8 @@ def solve(G , L_max , delta):
     compute_shortest_path(G)
     check_solution(G , center_nodes , L_max)
 
+    # print(center_nodes)
+
     # critical_paths = compute_shortest_path_between_centers(G , center_nodes , L_max)
 
     draw_graph(G , center_nodes)

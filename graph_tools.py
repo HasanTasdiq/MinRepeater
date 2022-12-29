@@ -106,10 +106,12 @@ def draw_graph(G , center_nodes):
 
 def compute_shortest_path(G):
     nodes = G.nodes()
+    print('in compute shortest path len' , len(nodes))
     global shortest_path_dict 
     for i in nodes:
         for j in nodes:
             if i != j:
+                print('in compute_shortest_path', i , j)
                 # Use NetworkX to generate the shortest path with Dijkstra's algorithm
                 (path_cost, sp) = nx.single_source_dijkstra(G=G, source=i, target=j, weight='length')
                 # Store the path cost and the shortest path itself as a tuple in the dictionary
@@ -200,10 +202,12 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
         center2 = None
         if i not in center_nodes:
             center1 = get_nearest_center(G , i , center_nodes , L_max)
-            length1 = get_distance(i , center1)
+            if center1 != j:
+                length1 = get_distance(i , center1)
         if j not in center_nodes:
             center2 = get_nearest_center(G, j , center_nodes , L_max)
-            length2 = get_distance(j , center2)
+            if center2 != i:
+                length2 = get_distance(j , center2)
 
         if center1 != None and center1 == center2:
             continue
@@ -227,8 +231,8 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
                 node_data = {}
                 dist = it * placement_dist
                 if it == 1:
-                    if i == 'BOST' or  i == 'JLAB' or j == 'BOST' or j == 'JLAB':
-                        print('**@@@@@@@@@@@@@@@@' , i , j , center1 , 'center2:' , center2 , get_distance(center1 , i) , length1 , length2 , G[i][j]['length'])
+                    if i == 'LBNL':
+                        print('**@@@@@@@@@@@@@@@@' , i , j , center1 , 'center2:' , center2 , get_distance(center1 , i) , length1 , length2 , G[i][j]['length'] , 'dist:' , dist)
                     if dist <= get_distance(center1 , i):
                         center_nodes.add(i)
                         continue

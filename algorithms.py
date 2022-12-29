@@ -28,9 +28,16 @@ def compute_center_nodes(G , L_max , delta):
     #         break
     print('init center:', initial_center_node)
     center_nodes.add(initial_center_node)
-    nodes.remove(initial_center_node)
+    # nodes.remove(initial_center_node)
 
-    remove_nodes_inside_circle(initial_center_node , nodes , L_max*delta)
+
+
+    compute_mandatory_centers(G , center_nodes , L_max)
+
+    for c in center_nodes:
+        if c in nodes:
+            nodes.remove(c)
+        remove_nodes_inside_circle(c , nodes , L_max*delta)
 
     max_len = L_max * delta
     while max_len >= L_max * delta:
@@ -87,7 +94,30 @@ def compute_center_nodes(G , L_max , delta):
 
     # print("==== t d " , t_d)
     return center_nodes
+def get_end_nodes(G , node):
+    end_nodes = []
+    for i , j in  G.edges(node):
+        if G.degree[j] == 1:
+            end_nodes.append(j)
 
+    return end_nodes
+def node_mandatory_for_end_nodes(G , end_nodes , L_max):
+    pairs = list(itertools.combinations(end_nodes, r=2))
+    for pair in pairs:
+        (path_cost, sp) = nx.single_source_dijkstra(G=G, source=pair[0], target=pair[1], weight='length')
+        if path_cost > L_max:
+            return True
+    return False
+
+
+def compute_mandatory_centers(G , center_nodes , L_max):
+    for node in G.nodes():
+        end_nodes = get_end_nodes(G , node)
+        if len(end_nodes) <= 0:
+            continue
+        if node_mandatory_for_end_nodes(G , end_nodes , L_max):
+            center_nodes.add(node)
+    print('&&&&&&&&& mandatory ' , center_nodes)
 
 
 def get_far_node_from_all_center(center_nodes , temp_list):
@@ -113,7 +143,8 @@ def remove_nodes_inside_circle(center , nodes , radius):
             nodes_inside_circle.append(node)
     
     for node in nodes_inside_circle:
-        nodes.remove(node)
+        if node in nodes:
+            nodes.remove(node)
 
 def compute_shortest_path_between_centers(G , center_nodes , L_max):
     shortest_path_between_centers = []
