@@ -218,6 +218,8 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
             lon1 = G.nodes[i]['Longitude']
             lat2 = G.nodes[j]['Latitude']
             lon2 = G.nodes[j]['Longitude']
+            lat3 = lat1
+            lon3 = lon1
             node1 = i
             placement_dist = length / (int(length / L_max) + 1)
             for it in range(1 ,  int(length / L_max) + 1):
@@ -231,7 +233,15 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
                         center_nodes.add(i)
                         continue
                     dist = dist - length1
-                    
+                if q_node == 62:
+                    print('**300000000000000000000', i , j , lat1 , lon1 , lat2 , lon2 , length , L_max , dist)
+                    print(i , it ,"QN", q_node , lon3 , lat3   , dist)
+                    print("calculated distance:" , get_distance_long_lat(lat1 , lon1 , lat3 , lon3))
+                    print('get_distance(node1 , j)' , node1 , j , get_distance_long_lat(lat3 , lon3 , lat2 , lon2))
+                if  placement_dist >= get_distance_long_lat(lat3 , lon3 , lat2 , lon2):
+                    node2 = node1
+                    center_nodes.add(j)
+                    continue
                 lat3 , lon3 = get_intermediate_point(lat1 , lon1 , lat2 , lon2 , dist)
 
                 node2 = "QN" +str(q_node) 
@@ -243,15 +253,8 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
                 #     print('300000000000000000000', i , j , lat1 , lon1 , lat2 , lon2 , length , L_max , dist)
                 #     print(i , it ,"QN", q_node , lon3 , lat3   , dist)
                 #     print("calculated distance:" , get_distance_long_lat(lat1 , lon1 , lat3 , lon3))
-                if q_node == 62:
-                    print('300000000000000000000', i , j , lat1 , lon1 , lat2 , lon2 , length , L_max , dist)
-                    print(i , it ,"QN", q_node , lon3 , lat3   , dist)
-                    print("calculated distance:" , get_distance_long_lat(lat1 , lon1 , lat3 , lon3))
-                    print('get_distance(node1 , j)' , get_distance(node1 , j))
-                if placement_dist >= get_distance(node1 , j):
-                    node2 = node1
-                    center_nodes.add(j)
-                    continue
+
+
 
                 q_node_list.append(node_data)
                 q_node_edges.append((node1 , node2))
