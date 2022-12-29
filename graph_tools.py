@@ -111,7 +111,7 @@ def compute_shortest_path(G):
     for i in nodes:
         for j in nodes:
             if i != j:
-                print('in compute_shortest_path', i , j)
+                
                 # Use NetworkX to generate the shortest path with Dijkstra's algorithm
                 (path_cost, sp) = nx.single_source_dijkstra(G=G, source=i, target=j, weight='length')
                 # Store the path cost and the shortest path itself as a tuple in the dictionary

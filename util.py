@@ -16,9 +16,10 @@ def kill_all():
     pid = os.getppid()
     kill_processes(pid)
 
-def calculate_output():
+def calculate_output(G):
     global no_of_thread
     out_set = set()
+    new_repeater_count = 0
     for thread_no in range(0 , no_of_thread):
         fo = open("center/chosen_" + str(thread_no) +".txt", "r")
         lines = fo.readlines()
@@ -27,7 +28,12 @@ def calculate_output():
             out_set.update(elements)
         fo.close()
     
+    for node in out_set:
+        if G.nodes[node]["type"] == "new_repeater_node":
+            new_repeater_count += 1
+
     print("total repeater chosen:" , len(out_set))
+    print("new repeaters needed:" , new_repeater_count)
 
 def get_nearest_node(G , node):
     length = nx.single_source_shortest_path_length(G ,source=node, cutoff=1)
