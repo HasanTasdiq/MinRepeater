@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import itertools
 import ast
+import math
 
 shortest_path_dict = {}
 
@@ -214,10 +215,11 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
         
         
 
-        length = G[i][j]['length'] + length1 + length2
+        length = G[i][j]['length']
 
             
         if length > L_max :
+            length = length + length1 + length2
             lat1 = G.nodes[i]['Latitude']
             lon1 = G.nodes[i]['Longitude']
             lat2 = G.nodes[j]['Latitude']
@@ -247,6 +249,9 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
                     center_nodes.add(j)
                     continue
                 lat3 , lon3 = get_intermediate_point(lat1 , lon1 , lat2 , lon2 , dist)
+                print("++++++====+++++ " , dist)
+                print(lat1 , lon1 , lat3 , lon3)
+                print("======++++=====" , get_distance_long_lat(lat1 , lon1 , lat3 , lon3))
 
                 node2 = "QN" +str(q_node) 
                 node_data['node'] = node2
@@ -302,13 +307,21 @@ def get_intermediate_point(lat1 , lon1 , lat2 , lon2 , d):
     x = np.cos(φ1)*np.sin(φ2) -  np.sin(φ1)*np.cos(φ2)*np.cos(λ2-λ1)
     θ = np.arctan2(y, x)
     brng = θ
-    # brng = (θ*180/np.pi + 360) % 360;  #in degrees
-    # brng = brng * constant
+    brng2 = (θ*180/np.pi + 360) % 360;  #in degrees
+    print('+++ brng' , brng2)
+
 
     φ3 = np.arcsin( np.sin(φ1)*np.cos(d/R ) + np.cos(φ1)*np.sin(d/R )*np.cos(brng) )
     λ3 = λ1 + np.arctan2(np.sin(brng)*np.sin(d/R )*np.cos(φ1),  np.cos(d/R )-np.sin(φ1)*np.sin(φ2))
 
-    return np.round(φ3/constant , 2) , np.round(λ3/constant , 2)
+    # φ3 = np.arcsin( np.sin(φ1)*np.cos(np.radians(d/R) ) + np.cos(φ1)*np.sin(np.radians(d/R) )*np.cos(brng) )
+    # λ3 = λ1 + np.arctan2(np.sin(brng)*np.sin(np.radians(d/R) )*np.cos(φ1),  np.cos(np.radians(d/R) )-np.sin(φ1)*np.sin(φ2))
+
+    return np.round(np.degrees(φ3) , 14) , np.round(np.degrees(λ3) , 14)
+
+
+
+
 
 
 def get_distance_long_lat(lat1 , lon1 , lat2 , lon2):

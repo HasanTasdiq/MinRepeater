@@ -36,7 +36,7 @@ def main(file_name):
 if __name__ == "__main__":
     start = time.time()
     main('es_net.gml')
-    # main('custom.gml')
+    # main('SurfnetCore.gml')
     end = time.time()
 
     print("time taken:" , end - start , "sec")
