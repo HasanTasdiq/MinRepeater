@@ -200,6 +200,7 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
         length2 = 0
         center1 = None
         center2 = None
+        q_node_added = False
         if i not in center_nodes:
             center1 = get_nearest_center(G , i , center_nodes , L_max)
             if center1 != j:
@@ -225,6 +226,7 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
             lat3 = lat1
             lon3 = lon1
             node1 = i
+            node2 = i
             placement_dist = length / (int(length / L_max) + 1)
             for it in range(1 ,  int(length / L_max) + 1):
 
@@ -264,9 +266,10 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
                 q_node_edges.append((node1 , node2))
                 node1 = node2
                 q_node += 1
-            q_node_edges.append((node2 , j))
-            done_dest_node[j] = 1
-            removable_edge.append((i, j))
+                q_node_added = True
+            if q_node_added > 0:
+                q_node_edges.append((node2 , j))
+                removable_edge.append((i, j))
             # print('== ' , i , '-' , j)
     
 
