@@ -1,6 +1,6 @@
 
 from graph_tools import draw_graph, read_graph_from_gml , compute_shortest_path , add_quantum_repeater_between_centers
-from algorithms import compute_center_nodes , compute_shortest_path_between_centers , check_solution
+from algorithms import compute_center_nodes , compute_shortest_path_between_centers , check_solution , choose_as_center
 from util import calculate_output
 import time
 
@@ -9,6 +9,8 @@ def solve(G , L_max , delta):
     print("len of c " , len(center_nodes))
     add_quantum_repeater_between_centers(G , center_nodes , L_max * .9   )
     compute_shortest_path(G)
+    choose_as_center(G , center_nodes , L_max)
+
     check_solution(G , center_nodes , L_max)
 
     # print(center_nodes)
@@ -35,8 +37,8 @@ def main(file_name):
 
 if __name__ == "__main__":
     start = time.time()
-    main('es_net.gml')
-    # main('SurfnetCore.gml')
+    # main('es_net.gml')
+    main('SurfnetCore.gml')
     end = time.time()
 
     print("time taken:" , end - start , "sec")

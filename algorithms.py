@@ -8,6 +8,8 @@ import math
 from multiprocessing import Process
 import sys
 import os
+from itertools import permutations 
+
 
 terminate = False
 
@@ -220,6 +222,26 @@ def check_pairs(G, center_nodes , L_max , unique_end_node_pairs , thread_no ):
                 new_node_count += 1
         print("new_node_count:", new_node_count )
         print("total quantum repeater needed:", len(center_nodes) )
+
+def choose_as_center(G , center_nodes , L_max):
+
+    center_pairs = list(permutations(center_nodes, 2))
+    for pair in center_pairs:
+        i = pair[0]
+        j = pair[1]
+        center1 = i
+        (path_cost, sp) = nx.single_source_dijkstra(G=G, source=i, target=j, weight='length')
+        if path_cost > L_max:
+            node1 = i
+            for n in range(1 , len(sp)):
+                node2 = sp[n]
+                (dist2, sp2) = nx.single_source_dijkstra(G=G, source=center1, target=node2, weight='length')
+                if dist2 > L_max:
+                    center_nodes.add(node1)
+                    center1 = node1
+                node1 = node2
+
+    
 
 
 def check_solution(G , center_nodes , L_max):

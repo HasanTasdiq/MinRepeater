@@ -3,7 +3,7 @@ import os
 import networkx as nx
 from graph_tools import shortest_path_dict 
 
-no_of_thread = 60
+no_of_thread = 6
 
 def kill_processes(pid):
     parent = psutil.Process(pid)
