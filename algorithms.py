@@ -250,7 +250,7 @@ def choose_as_center(G , center_nodes , L_max):
 
 
 def check_solution(G , center_nodes , L_max):
-    end_nodes =  [x for x,y in G.nodes(data=True) if y['type']=="repeater_node"]
+    end_nodes =  [x for x,y in G.nodes(data=True) if y['type']=="repeater_node" or y['type']=="end_node"]
     unique_end_node_pairs = list(itertools.combinations(end_nodes, r=2))
     print('len unique_end_node_pairs:' , len(unique_end_node_pairs))
     global no_of_thread
