@@ -35,6 +35,8 @@ def calculate_output(G):
     print("total repeater chosen:" , len(out_set))
     print("new repeaters needed:" , new_repeater_count)
 
+    return out_set
+
 def get_nearest_node(G , node):
     length = nx.single_source_shortest_path_length(G ,source=node, cutoff=1)
 

@@ -1,5 +1,5 @@
 import networkx as nx
-from graph_tools import shortest_path_dict , get_distance_between_nodes, get_distance 
+from graph_tools import shortest_path_dict , get_distance_between_nodes, get_distance , draw_graph
 from util import kill_all , no_of_thread , get_nearest_node
 import random
 import itertools
@@ -100,6 +100,10 @@ def compute_center_nodes(G , L_max , delta):
 
     # print("==== t d " , t_d)
     return center_nodes
+
+
+
+
 def get_end_nodes(G , node):
     end_nodes = []
     for i , j in  G.edges(node):
@@ -130,6 +134,7 @@ def skip_end_nodes(G , nodes):
         if G.degree(node) == 1:
             if node in nodes:
                 nodes.remove(node)
+            G.nodes[node]['type'] = 'end_node'
 
 def get_far_node_from_all_center(center_nodes , temp_list):
     prev_dist = 0
@@ -176,8 +181,8 @@ def is_feasible_path(path , center_nodes , L_max):
         if current_node in center_nodes:
             dist = get_distance(first_node_of_link , current_node)
             if dist > L_max:
-                print(first_node_of_link , current_node , dist)
-                print(path)
+                # print(first_node_of_link , current_node , dist)
+                # print(path)
                 return False
             first_node_of_link = current_node
     last_node_of_link = path[-1]

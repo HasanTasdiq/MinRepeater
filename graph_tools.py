@@ -118,77 +118,44 @@ def compute_shortest_path(G):
                 # Store the path cost and the shortest path itself as a tuple in the dictionary
                 shortest_path_dict[(i, j)] = (path_cost, sp)
     print('shortest_path_dict len' , len(shortest_path_dict))
-def add_quantum_repeater( G , L_max):
-    print("====================== number of nodes 1 " , G.number_of_nodes() , " ===================================")
-
-    q_node  = 0
-    q_node_list = []
-    q_node_edges = []
-    pos = nx.get_node_attributes(G, 'pos')
-    done_dest_node = {}
-    removable_edge = []
-       
-    for i, j in G.edges():
-
-        length = G[i][j]['length']
-            
-        if length > L_max :
-            lat1 = G.nodes[i]['Latitude']
-            lon1 = G.nodes[i]['Longitude']
-            lat2 = G.nodes[j]['Latitude']
-            lon2 = G.nodes[j]['Longitude']
-            node1 = i
-            placement_dist = length / (int(length / L_max) + 1)
-            for it in range(1 ,  int(length / L_max) + 1):
-                node_data = {}
-                dist = it * placement_dist
-                lat3 , lon3 = get_intermediate_point(lat1 , lon1 , lat2 , lon2 , dist)
-                print(i , it ,"QN", q_node , lon3 , lat3   , dist)
-                print("calculated distance:" , get_distance_long_lat(lat1 , lon1 , lat3 , lon3))
-                node2 = "QN" +str(q_node) 
-                node_data['node'] = node2
-                node_data['Latitude'] = float(lat3)
-                node_data['Longitude'] = float(lon3)
-
-                if q_node == 279 or q_node == 304:
-                    print('300000000000000000000', i , j , lat1 , lon1 , lat2 , lon2 , length , L_max , dist)
 
 
 
-                q_node_list.append(node_data)
-                q_node_edges.append((node1 , node2))
-                node1 = node2
-                q_node += 1
-            q_node_edges.append((node2 , j))
-            done_dest_node[j] = 1
-            removable_edge.append((i, j))
-            # print('== ' , i , '-' , j)
+def compute_mst_centers(G , center_nodes):
+    H = G.copy()
+    for node in G.nodes():
+        if ('type' in G.nodes[node] and  G.nodes[node]['type'] == "new_repeater_node") or node not in center_nodes:
+            H.remove_node(node)
+    for i in H.nodes():
+        for j in H.nodes():
+            if i != j:
+                (path_cost, sp) = nx.single_source_dijkstra(G=G, source=i, target=j, weight='length')
+                H.add_edge(i , j , length=path_cost)
     
+    T = nx.minimum_spanning_tree(H , weight='length')
 
-    for node_data in q_node_list:
-        G.add_node(node_data['node'], Longitude=node_data['Longitude'] , Latitude=node_data['Latitude'])
-        G.nodes[node_data['node']]['type'] = 'new_repeater_node'
-        pos[node_data['node']] = [node_data['Longitude'], node_data['Latitude']]
-    for i , j in removable_edge:
-        # print(i , '-' , j)
-        G.remove_edge(i , j)
+    return T
 
-    G.add_edges_from(q_node_edges)
-    for i, j in G.edges():
-        if 'length' not in G[i][j]:
-                _compute_dist_lat_lon(G)
-    nx.set_node_attributes(G, pos, name='pos')
-    for i , j in G.edges('WASH'):
-        print('***************' , i , j , G[i][j]['length'])
-    print("====================== number of nodes 2 " , G.number_of_nodes() , " ===================================")
-    # draw_graph(G , [])
-
-
-
+def compute_edges_to_place_new_repeaters(G , center_nodes):
+    T = compute_mst_centers(G , center_nodes)
+    edge_list = list()
+    for i , j in T.edges():
+        (path_cost, sp) = nx.single_source_dijkstra(G=G, source=i, target=j, weight='length')
+        for i in range(len(sp)):
+            if i +1 < len(sp):
+                edge_list.append((sp[i] , sp[i+1]))
+    for node in G.nodes():
+        if G.nodes[node]['type'] == 'end_node':
+            print('+++++++++= ' , G.edges(node))
+            edge_list.append(list(G.edges(node))[0])
+    
+    return edge_list
 
 def add_quantum_repeater_between_centers( G , center_nodes , L_max):
     print("====================== number of nodes 1 " , G.number_of_nodes() , " ===================================")
 
+    edge_list = compute_edges_to_place_new_repeaters(G , center_nodes)
+
     q_node  = 0
     q_node_list = []
     q_node_edges = []
@@ -196,7 +163,7 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
     done_dest_node = {}
     removable_edge = []
        
-    for i, j in G.edges():
+    for i, j in edge_list:
         length1 = 0
         length2 = 0
         center1 = None
@@ -235,36 +202,22 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
                 node_data = {}
                 dist = it * placement_dist
                 if it == 1:
-                    if i == 'LBNL':
-                        print('**@@@@@@@@@@@@@@@@' , i , j , center1 , 'center2:' , center2 , get_distance(center1 , i) , length1 , length2 , G[i][j]['length'] , 'dist:' , dist)
                     if dist <= get_distance(center1 , i):
                         center_nodes.add(i)
                         continue
                     dist = dist - length1
-                if q_node == 62:
-                    print('**300000000000000000000', i , j , lat1 , lon1 , lat2 , lon2 , length , L_max , dist)
-                    print(i , it ,"QN", q_node , lon3 , lat3   , dist)
-                    print("calculated distance:" , get_distance_long_lat(lat1 , lon1 , lat3 , lon3))
-                    print('get_distance(node1 , j)' , node1 , j , get_distance_long_lat(lat3 , lon3 , lat2 , lon2))
+
                 if  placement_dist >= get_distance_long_lat(lat3 , lon3 , lat2 , lon2):
                     node2 = node1
                     center_nodes.add(j)
                     continue
                 lat3 , lon3 = get_intermediate_point(lat1 , lon1 , lat2 , lon2 , dist)
-                print("++++++====+++++ " , dist)
-                print(lat1 , lon1 , lat3 , lon3)
-                print("======++++=====" , get_distance_long_lat(lat1 , lon1 , lat3 , lon3))
+                # print(lat1 , lon1 , lat3 , lon3)
 
                 node2 = "QN" +str(q_node) 
                 node_data['node'] = node2
                 node_data['Latitude'] = float(lat3)
                 node_data['Longitude'] = float(lon3)
-
-                # if i == 'LBNL' or j == 'LBNL':
-                #     print('300000000000000000000', i , j , lat1 , lon1 , lat2 , lon2 , length , L_max , dist)
-                #     print(i , it ,"QN", q_node , lon3 , lat3   , dist)
-                #     print("calculated distance:" , get_distance_long_lat(lat1 , lon1 , lat3 , lon3))
-
 
 
                 q_node_list.append(node_data)
@@ -311,7 +264,6 @@ def get_intermediate_point(lat1 , lon1 , lat2 , lon2 , d):
     θ = np.arctan2(y, x)
     brng = θ
     brng2 = (θ*180/np.pi + 360) % 360;  #in degrees
-    print('+++ brng' , brng2)
 
 
     φ3 = np.arcsin( np.sin(φ1)*np.cos(d/R ) + np.cos(φ1)*np.sin(d/R )*np.cos(brng) )
