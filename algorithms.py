@@ -1,5 +1,5 @@
 import networkx as nx
-from graph_tools import shortest_path_dict , get_distance_between_nodes, get_distance , draw_graph
+from graph_tools import shortest_path_dict , get_distance_between_nodes, get_distance , draw_graph , compute_edges_to_choose_more_centers
 from util import kill_all , no_of_thread , get_nearest_node
 import random
 import itertools
@@ -36,6 +36,8 @@ def compute_center_nodes(G , L_max , delta):
 
     if len(center_nodes) <= 1:
         initial_center_node = nodes[random.randint(0, len(nodes) - 1)]
+        # initial_center_node = nodes[1]
+
         print('init center:', initial_center_node)
         center_nodes.add(initial_center_node)
 
@@ -231,9 +233,11 @@ def check_pairs(G, center_nodes , L_max , unique_end_node_pairs , thread_no ):
 def choose_as_center(G , center_nodes , L_max):
 
     center_pairs = list(permutations(center_nodes, 2))
-    for pair in center_pairs:
-        i = pair[0]
-        j = pair[1]
+    edge_list = compute_edges_to_choose_more_centers(G , center_nodes)
+    print('edge list ' , edge_list)
+    for i , j in edge_list:
+        # i = pair[0]
+        # j = pair[1]
         center1 = i
         (path_cost, sp) = nx.single_source_dijkstra(G=G, source=i, target=j, weight='length')
         if path_cost > L_max:

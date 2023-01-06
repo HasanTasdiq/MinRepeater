@@ -13,6 +13,9 @@ def solve(G , L_max , delta):
     compute_shortest_path(G)
     choose_as_center(G , center_nodes , L_max)
 
+    print("len of cccccccccdddddd " , len(center_nodes))
+
+
 
     # centers2 = set()
     # centers2.update(["A'dam 2", 'Zwolle 1', 'Nijmegen 1', 'Utrecht 1', 'Utrecht 2'])
@@ -44,8 +47,8 @@ def main(file_name):
 
 if __name__ == "__main__":
     start = time.time()
-    main('es_net.gml')
-    # main('SurfnetCore.gml')
+    # main('es_net.gml')
+    main('SurfnetCore.gml')
     end = time.time()
 
     print("time taken:" , end - start , "sec")

@@ -131,9 +131,10 @@ def compute_mst_centers(G , center_nodes):
             if i != j:
                 (path_cost, sp) = nx.single_source_dijkstra(G=G, source=i, target=j, weight='length')
                 H.add_edge(i , j , length=path_cost)
+                # print('path cost ' , i , j , path_cost)
     
     T = nx.minimum_spanning_tree(H , weight='length')
-
+    draw_graph(T , [])
     return T
 
 def compute_edges_to_place_new_repeaters(G , center_nodes):
@@ -144,6 +145,17 @@ def compute_edges_to_place_new_repeaters(G , center_nodes):
         for i in range(len(sp)):
             if i +1 < len(sp):
                 edge_list.append((sp[i] , sp[i+1]))
+    for node in G.nodes():
+        if G.nodes[node]['type'] == 'end_node':
+            print('+++++++++= ' , G.edges(node))
+            edge_list.append(list(G.edges(node))[0])
+    
+    return edge_list
+def compute_edges_to_choose_more_centers(G , center_nodes):
+    T = compute_mst_centers(G , center_nodes)
+    edge_list = list()
+    for i , j in T.edges():
+        edge_list.append((i , j))
     for node in G.nodes():
         if G.nodes[node]['type'] == 'end_node':
             print('+++++++++= ' , G.edges(node))
