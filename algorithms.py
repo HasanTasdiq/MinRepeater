@@ -223,12 +223,7 @@ def check_pairs(G, center_nodes , L_max , unique_end_node_pairs , thread_no ):
         pair_no += 1
     if solution_exists:
         print("*********** solution exists!!!!!!!!!!!!!! in thread:" , thread_no)
-        new_node_count = 0
-        for node in center_nodes:
-            if G.nodes[node]["type"] == "new_repeater_node":
-                new_node_count += 1
-        print("new_node_count:", new_node_count )
-        print("total quantum repeater needed:", len(center_nodes) )
+
 
 def choose_as_center(G , center_nodes , L_max):
 
@@ -273,6 +268,13 @@ def check_solution(G , center_nodes , L_max):
         t.start()
     for t in thread_list:
         t.join()
+    
+    new_node_count = 0
+    for node in center_nodes:
+        if G.nodes[node]["type"] == "new_repeater_node":
+            new_node_count += 1
+    print("new_node_count:", new_node_count )
+    print("total quantum repeater needed:", len(center_nodes) )
     
 def put_in_file(path , center_nodes , thread_no):
     f = open("center/chosen_" + str(thread_no) +".txt", "w")

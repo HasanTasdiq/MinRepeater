@@ -37,10 +37,10 @@ def main(file_name):
 
     print("compute_shortest_path done!!")
     solve(G , L_max , delta)
-    print("calculating output")
+    # print("calculating output")
 
-    out_set = calculate_output(G)
-    draw_graph(G , out_set)
+    # out_set = calculate_output(G)
+    # draw_graph(G , out_set)
 
     
 
