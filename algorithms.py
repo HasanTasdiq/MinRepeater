@@ -36,6 +36,7 @@ def compute_center_nodes(G , L_max , delta):
 
     if len(center_nodes) <= 1:
         initial_center_node = nodes[random.randint(0, len(nodes) - 1)]
+        # initial_center_node = "A'dam 2"
         # initial_center_node = nodes[1]
 
         print('init center:', initial_center_node)

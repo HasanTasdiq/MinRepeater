@@ -147,7 +147,7 @@ def compute_edges_to_place_new_repeaters(G , center_nodes):
                 edge_list.append((sp[i] , sp[i+1]))
     for node in G.nodes():
         if G.nodes[node]['type'] == 'end_node':
-            print('+++++++++= ' , G.edges(node))
+            # print('+++++++++= ' , G.edges(node))
             edge_list.append(list(G.edges(node))[0])
     
     return edge_list
@@ -158,14 +158,14 @@ def compute_edges_to_choose_more_centers(G , center_nodes):
         edge_list.append((i , j))
     for node in G.nodes():
         if G.nodes[node]['type'] == 'end_node':
-            print('+++++++++= ' , G.edges(node))
+            # print('+++++++++= ' , G.edges(node))
             edge_list.append(list(G.edges(node))[0])
     
     return edge_list
 
 def add_quantum_repeater_between_centers( G , center_nodes , L_max):
     print("====================== number of nodes 1 " , G.number_of_nodes() , " ===================================")
-
+    # print("type: " , G.nodes["SNLCA"]['type'])
     edge_list = compute_edges_to_place_new_repeaters(G , center_nodes)
 
     q_node  = 0
@@ -216,8 +216,8 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
                 if it == 1:
                     if dist <= get_distance(center1 , i):
                         center_nodes.add(i)
-                        continue
-                    dist = dist - length1
+                        # continue
+                    # dist = dist - length1
 
                 if  placement_dist >= get_distance_long_lat(lat3 , lon3 , lat2 , lon2):
                     node2 = node1
@@ -225,6 +225,8 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
                     continue
                 lat3 , lon3 = get_intermediate_point(lat1 , lon1 , lat2 , lon2 , dist)
                 # print(lat1 , lon1 , lat3 , lon3)
+                # if i == 'SNLCA' or j == 'SNLCA':
+                #     print(i , j , placement_dist , length1 , dist , center1 , center2 , get_distance(center1 , i) , G[i][j]['length'])
 
                 node2 = "QN" +str(q_node) 
                 node_data['node'] = node2
