@@ -281,12 +281,16 @@ def check_solution(G , center_nodes , L_max):
 def put_in_file(path , center_nodes , thread_no):
     f = open("center/chosen_" + str(thread_no) +".txt", "w")
     center_str = ""
+    yes = False
     for node in path:
         if node in center_nodes:
             if node == 'EQXCH2':
-                print('yessssss ' , path)
+                yes = True
+                print('yessssss ' , thread_no)
             center_str += node + " "
     
+    if yes:
+        print(center_str[:-1])
     f.write(center_str[:-1])
     f.close()
 
