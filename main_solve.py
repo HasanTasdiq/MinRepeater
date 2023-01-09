@@ -23,9 +23,7 @@ def solve(G , L_max , delta):
     # print(centers2)
 
     check_solution(G , center_nodes , L_max)
-    print('===========')
-    print(center_nodes)
-    print('=======+++=======')
+
 
 
     draw_graph(G , center_nodes)

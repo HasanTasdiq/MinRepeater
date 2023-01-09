@@ -33,10 +33,11 @@ def calculate_output(G):
             new_repeater_count += 1
 
     print("total repeater chosen:" , len(out_set))
-    print('-------------------')
-    print(out_set)
-    print('---------=====------------')
+    # print('-------------------')
+    # print(out_set)
+    # print('---------=====------------')
     print("new repeaters needed:" , new_repeater_count)
+    print("existing repeaters needed:" , len(out_set) - new_repeater_count)
 
     return out_set
 
