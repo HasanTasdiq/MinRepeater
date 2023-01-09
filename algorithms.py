@@ -212,6 +212,8 @@ def check_pairs(G, center_nodes , L_max , unique_end_node_pairs , thread_no ):
             if is_feasible_path(path , center_nodes , L_max):
                 # print("path len" , len(path))
                 feasible_path = path
+                if i == 'EQXCH2' or j == 'EQXCH2':
+                    print("feasible path for EQXCH2" , feasible_path)
                 put_in_file(path , center_nodes ,  thread_no)
                 path_length = len(path)
                 break
