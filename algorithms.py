@@ -283,6 +283,8 @@ def put_in_file(path , center_nodes , thread_no):
     center_str = ""
     for node in path:
         if node in center_nodes:
+            if node == 'EQXCH2':
+                print('yessssss ' , path)
             center_str += node + " "
     
     f.write(center_str[:-1])
