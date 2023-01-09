@@ -3,7 +3,7 @@ import os
 import networkx as nx
 from graph_tools import shortest_path_dict 
 
-no_of_thread = 6
+no_of_thread = 60
 
 def kill_processes(pid):
     parent = psutil.Process(pid)
@@ -33,6 +33,9 @@ def calculate_output(G):
             new_repeater_count += 1
 
     print("total repeater chosen:" , len(out_set))
+    print('-------------------')
+    print(out_set)
+    print('---------=====------------')
     print("new repeaters needed:" , new_repeater_count)
 
     return out_set

@@ -23,6 +23,9 @@ def solve(G , L_max , delta):
     # print(centers2)
 
     check_solution(G , center_nodes , L_max)
+    print('===========')
+    print(center_nodes)
+    print('=======+++=======')
 
 
     draw_graph(G , center_nodes)
@@ -39,16 +42,16 @@ def main(file_name):
     solve(G , L_max , delta)
     # print("calculating output")
 
-    # out_set = calculate_output(G)
-    # draw_graph(G , out_set)
+    out_set = calculate_output(G)
+    draw_graph(G , out_set)
 
     
 
 
 if __name__ == "__main__":
     start = time.time()
-    # main('es_net.gml')
-    main('SurfnetCore.gml')
+    main('es_net.gml')
+    # main('SurfnetCore.gml')
     end = time.time()
 
     print("time taken:" , end - start , "sec")
