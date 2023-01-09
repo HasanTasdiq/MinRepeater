@@ -291,7 +291,7 @@ def put_in_file(path , center_nodes , thread_no):
     
     if yes:
         print(center_str[:-1])
-    f.write(center_str[:-1])
+    f.write(center_str)
     f.close()
 
 

@@ -29,7 +29,7 @@ def calculate_output(G):
         fo.close()
     
     for node in out_set:
-        if G.nodes[node]["type"] == "new_repeater_node":
+        if node !=' ' and G.nodes[node]["type"] == "new_repeater_node":
             new_repeater_count += 1
 
     print("total repeater chosen:" , len(out_set))
