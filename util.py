@@ -27,7 +27,7 @@ def calculate_output(G):
             elements = line.split(" ") 
             out_set.update(elements)
         fo.close()
-    
+    out_set.remove('')
     for node in out_set:
         if (node !='' and node != ' ') and G.nodes[node]["type"] == "new_repeater_node":
             new_repeater_count += 1
