@@ -279,7 +279,7 @@ def check_solution(G , center_nodes , L_max):
     print("total quantum repeater needed:", len(center_nodes) )
     
 def put_in_file(path , center_nodes , thread_no):
-    f = open("center/chosen_" + str(thread_no) +".txt", "w")
+    f = open("center/chosen_" + str(thread_no) +".txt", "a")
     center_str = ""
     yes = False
     for node in path:
