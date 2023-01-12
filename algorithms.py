@@ -35,9 +35,9 @@ def compute_center_nodes(G , L_max , delta):
     compute_mandatory_centers(G , center_nodes , L_max)
 
     if len(center_nodes) <= 1:
-        initial_center_node = nodes[random.randint(0, len(nodes) - 1)]
+        # initial_center_node = nodes[random.randint(0, len(nodes) - 1)]
         # initial_center_node = "A'dam 2"
-        # initial_center_node = nodes[1]
+        initial_center_node = get_initial_node(G , L_max * delta)
 
         print('init center:', initial_center_node)
         center_nodes.add(initial_center_node)
@@ -105,7 +105,20 @@ def compute_center_nodes(G , L_max , delta):
     return center_nodes
 
 
+def get_initial_node(G , radius):
+    max_nodes_inside_circle = 0
+    init_node = None
+    for node1 in G.nodes():
+        nodes_inside_circle = 0
+        for node2 in G.nodes():
+            if node1 != node2 and get_distance(node1 , node2) <= radius:
+                nodes_inside_circle += 1
+        if nodes_inside_circle > max_nodes_inside_circle:
+            init_node = node1
+            max_nodes_inside_circle = nodes_inside_circle
 
+    return init_node
+        
 
 def get_end_nodes(G , node):
     end_nodes = []
@@ -283,7 +296,7 @@ def put_in_file(path , center_nodes , thread_no):
     yes = False
     for node in path:
         if node in center_nodes:
-            center_str += node + " "
+            center_str += node + ";"
     
 
     f.write(center_str)

@@ -7,7 +7,7 @@ import time
 def solve(G , L_max , delta):
     center_nodes = compute_center_nodes(G , L_max, delta)
     print("len of c " , len(center_nodes))
-    add_quantum_repeater_between_centers(G , center_nodes , L_max * .8   )
+    add_quantum_repeater_between_centers(G , center_nodes , L_max * .95   )
     print("len of ccccccccc " , len(center_nodes))
 
     compute_shortest_path(G)
@@ -41,15 +41,15 @@ def main(file_name):
     # print("calculating output")
 
     out_set = calculate_output(G)
-    draw_graph(G , out_set)
+    # draw_graph(G , out_set)
 
     
 
 
 if __name__ == "__main__":
     start = time.time()
-    main('es_net.gml')
-    # main('SurfnetCore.gml')
+    # main('es_net.gml')
+    main('SurfnetCore.gml')
     end = time.time()
 
     print("time taken:" , end - start , "sec")
