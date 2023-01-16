@@ -207,8 +207,8 @@ def is_feasible_path(path , center_nodes , L_max):
         if current_node in center_nodes:
             dist = get_distance(first_node_of_link , current_node)
             if dist > L_max:
-                print(first_node_of_link , current_node , dist)
-                print(path)
+                # print(first_node_of_link , current_node , dist)
+                # print(path)
                 return False
             first_node_of_link = current_node
     last_node_of_link = path[-1]
