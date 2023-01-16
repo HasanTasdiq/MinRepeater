@@ -227,7 +227,7 @@ def check_pairs(G, center_nodes , L_max , unique_end_node_pairs , thread_no , k 
             G2 = G.copy()
             for i in range(k-1):
                 G2.remove_node(tup[i])
-        check_pairs_k(G2, center_nodes , L_max , unique_end_node_pairs , thread_no )
+            check_pairs_k(G2, center_nodes , L_max , unique_end_node_pairs , thread_no )
 
             
             
