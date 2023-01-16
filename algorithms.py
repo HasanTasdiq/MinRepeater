@@ -14,8 +14,18 @@ from itertools import permutations
 terminate = False
 
 
+def compute_center_nodes(G , L_max , delta , k):
+    center_nodes = set()
+    G2 = G.copy()
 
-def compute_center_nodes(G , L_max , delta):
+    for i in range(0 , k):
+        center_nodes_i = get_center_nodes(G2 , L_max , delta )
+        center_nodes.update(center_nodes_i)
+        for c in center_nodes_i:
+            G2.remove_node(c)
+    return center_nodes
+
+def get_center_nodes(G , L_max , delta ):
     # print("sssssss " , get_distance('A\'dam 2' , 'Westerbork'))
     # print("sssssss " , get_distance('PNNL' , 'NETL-ALB'))
     # print("sssssss " , get_distance('Nijmegen 1' , 'Utrecht 1'))
@@ -197,8 +207,8 @@ def is_feasible_path(path , center_nodes , L_max):
         if current_node in center_nodes:
             dist = get_distance(first_node_of_link , current_node)
             if dist > L_max:
-                # print(first_node_of_link , current_node , dist)
-                # print(path)
+                print(first_node_of_link , current_node , dist)
+                print(path)
                 return False
             first_node_of_link = current_node
     last_node_of_link = path[-1]
@@ -228,6 +238,7 @@ def check_pairs(G, center_nodes , L_max , unique_end_node_pairs , thread_no ):
                 feasible_path = path
                 put_in_file(path , center_nodes ,  thread_no)
                 path_length = len(path)
+                print('feasible path found for pair ' , pair_no)
                 break
         if feasible_path is None:
             print("!!!!---------------- !!!!!!!!!!!! NOT feasible !!!!!!!!!! --------------- in thread: " , thread_no )

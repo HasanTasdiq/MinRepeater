@@ -4,21 +4,22 @@ from algorithms import compute_center_nodes  , check_solution , choose_as_center
 from util import calculate_output
 import time
 
-def solve(G , L_max , delta):
-    center_nodes = compute_center_nodes(G , L_max, delta)
-    print("len of c " , len(center_nodes))
+def solve(G , L_max , delta , k):
+    center_nodes = compute_center_nodes(G , L_max, delta , k)
+    print("len of c " , len(center_nodes) , center_nodes)
     add_quantum_repeater_between_centers(G , center_nodes , L_max * .95   )
     print("len of ccccccccc " , len(center_nodes))
 
     compute_shortest_path(G)
-    choose_as_center(G , center_nodes , L_max)
+    # choose_as_center(G , center_nodes , L_max)
 
     print("len of cccccccccdddddd " , len(center_nodes))
 
 
 
-    # centers2 = set()
+    centers2 = set()
     # centers2.update(["A'dam 2", 'Zwolle 1', 'Nijmegen 1', 'Utrecht 1', 'Utrecht 2'])
+    centers2.update([   'Groningen 1' ])
 
     # print(centers2)
 
@@ -31,13 +32,14 @@ def solve(G , L_max , delta):
 def main(file_name):
     L_max = 136
     delta =1
+    k = 1
     G = read_graph_from_gml(file_name)
     print("read from graph done !!")
     print("add_quantum_repeater done!!")
     compute_shortest_path(G)
 
     print("compute_shortest_path done!!")
-    solve(G , L_max , delta)
+    solve(G , L_max , delta , k)
     # print("calculating output")
 
     out_set = calculate_output(G)
