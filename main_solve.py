@@ -11,15 +11,15 @@ def solve(G , L_max , delta , k):
     print("len of ccccccccc " , len(center_nodes))
 
     compute_shortest_path(G)
-    # choose_as_center(G , center_nodes , L_max)
+    choose_as_center(G , center_nodes , L_max)
 
     print("len of cccccccccdddddd " , len(center_nodes))
 
 
 
-    centers2 = set()
-    # centers2.update(["A'dam 2", 'Zwolle 1', 'Nijmegen 1', 'Utrecht 1', 'Utrecht 2'])
-    centers2.update([   'Groningen 1' ])
+    # centers2 = set()
+    # # centers2.update(["A'dam 2", 'Zwolle 1', 'Nijmegen 1', 'Utrecht 1', 'Utrecht 2'])
+    # centers2.update([   'Groningen 1' ])
 
     # print(centers2)
 
@@ -32,7 +32,7 @@ def solve(G , L_max , delta , k):
 def main(file_name):
     L_max = 136
     delta =1
-    k = 1
+    k = 2
     G = read_graph_from_gml(file_name)
     print("read from graph done !!")
     print("add_quantum_repeater done!!")
