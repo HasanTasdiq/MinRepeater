@@ -220,7 +220,7 @@ def is_feasible_path(path , center_nodes , L_max):
 
 def check_pairs(G, center_nodes , L_max , unique_end_node_pairs , thread_no , k ):
     if k ==1:
-        check_pairs_k(G2, center_nodes , L_max , unique_end_node_pairs , thread_no )
+        check_pairs_k(G, center_nodes , L_max , unique_end_node_pairs , thread_no )
     else:
         random_down_nodes_ = list(itertools.combinations(center_nodes, r=k-1))
         for tup in random_down_nodes_:
