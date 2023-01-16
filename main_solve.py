@@ -32,7 +32,7 @@ def solve(G , L_max , delta , k):
 def main(file_name):
     L_max = 136
     delta =1
-    k = 2
+    k = 1
     G = read_graph_from_gml(file_name)
     print("read from graph done !!")
     print("add_quantum_repeater done!!")
