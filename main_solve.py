@@ -23,7 +23,7 @@ def solve(G , L_max , delta , k):
 
     # print(centers2)
 
-    check_solution(G , center_nodes , L_max)
+    check_solution(G , center_nodes , L_max , k)
 
 
 

@@ -217,9 +217,18 @@ def is_feasible_path(path , center_nodes , L_max):
         return False
     
     return True
+
+def check_pairs(G, center_nodes , L_max , unique_end_node_pairs , thread_no , k ):
+    random_down_nodes_ = list(itertools.combinations(center_nodes, r=k))
+    for tup in random_down_nodes_:
+        G2 = G.copy()
+        for i in range(k):
+            G2.remove_node(tup[i])
+        check_pairs_k(G2, center_nodes , L_max , unique_end_node_pairs , thread_no )
+
             
             
-def check_pairs(G, center_nodes , L_max , unique_end_node_pairs , thread_no ):
+def check_pairs_k(G, center_nodes , L_max , unique_end_node_pairs , thread_no ):
 
     solution_exists = True
     pair_no = 0
@@ -273,7 +282,7 @@ def choose_as_center(G , center_nodes , L_max):
     
 
 
-def check_solution(G , center_nodes , L_max):
+def check_solution(G , center_nodes , L_max , k):
     end_nodes =  [x for x,y in G.nodes(data=True) if y['type']=="repeater_node" or y['type']=="end_node"]
     unique_end_node_pairs = list(itertools.combinations(end_nodes, r=2))
     print('len unique_end_node_pairs:' , len(unique_end_node_pairs))
@@ -287,7 +296,7 @@ def check_solution(G , center_nodes , L_max):
         if end_index > len(unique_end_node_pairs):
             end_index = len(unique_end_node_pairs)
         sub_list = unique_end_node_pairs[start_index: end_index]
-        t = Process(target=check_pairs, args=(G, center_nodes, L_max , sub_list , i ))
+        t = Process(target=check_pairs, args=(G, center_nodes, L_max , sub_list , i ,k))
         print("running thread:::::: " , i)
         thread_list.append(t)
         t.start()
