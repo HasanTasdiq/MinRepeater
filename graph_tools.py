@@ -152,15 +152,18 @@ def compute_edges_to_place_new_repeaters(G , center_nodes):
     
     return edge_list
 def compute_edges_to_choose_more_centers(G , center_nodes , k):
+    edge_list = list()
+
     if k ==1:
-        compute_edges_to_choose_more_centers_k(G , center_nodes)
+        edge_list.append(compute_edges_to_choose_more_centers_k(G , center_nodes))
     else:
         random_down_nodes_ = list(itertools.combinations(center_nodes, r=k-1))
         for tup in random_down_nodes_:
             G2 = G.copy()
             for i in range(k-1):
                 G2.remove_node(tup[i])
-            compute_edges_to_choose_more_centers_k(G2 , center_nodes)
+            edge_list.append(compute_edges_to_choose_more_centers_k(G2 , center_nodes))
+    return edge_list
     
 def compute_edges_to_choose_more_centers_k(G , center_nodes):
     T = compute_mst_centers(G , center_nodes)
