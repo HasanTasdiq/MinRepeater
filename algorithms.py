@@ -262,10 +262,10 @@ def check_pairs_k(G, center_nodes , L_max , unique_end_node_pairs , thread_no ):
         print("*********** solution exists!!!!!!!!!!!!!! in thread:" , thread_no)
 
 
-def choose_as_center(G , center_nodes , L_max):
+def choose_as_center(G , center_nodes , L_max , k):
 
     center_pairs = list(permutations(center_nodes, 2))
-    edge_list = compute_edges_to_choose_more_centers(G , center_nodes)
+    edge_list = compute_edges_to_choose_more_centers(G , center_nodes , k)
     print('edge list ' , edge_list)
     for i , j in edge_list:
         # i = pair[0]
