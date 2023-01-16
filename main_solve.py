@@ -11,7 +11,7 @@ def solve(G , L_max , delta , k):
     print("len of ccccccccc " , len(center_nodes))
 
     compute_shortest_path(G)
-    choose_as_center(G , center_nodes , L_max)
+    choose_as_center(G , center_nodes , L_max, k)
 
     print("len of cccccccccdddddd " , len(center_nodes))
 
