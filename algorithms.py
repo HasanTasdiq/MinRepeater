@@ -219,12 +219,15 @@ def is_feasible_path(path , center_nodes , L_max):
     return True
 
 def check_pairs(G, center_nodes , L_max , unique_end_node_pairs , thread_no , k ):
-    random_down_nodes_ = list(itertools.combinations(center_nodes, r=k))
-    for tup in random_down_nodes_:
-        G2 = G.copy()
-        for i in range(k):
-            G2.remove_node(tup[i])
+    if k ==1:
         check_pairs_k(G2, center_nodes , L_max , unique_end_node_pairs , thread_no )
+    else:
+        random_down_nodes_ = list(itertools.combinations(center_nodes, r=k-1))
+        for tup in random_down_nodes_:
+            G2 = G.copy()
+            for i in range(k-1):
+                G2.remove_node(tup[i])
+            check_pairs_k(G2, center_nodes , L_max , unique_end_node_pairs , thread_no )
 
             
             
