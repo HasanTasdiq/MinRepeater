@@ -188,8 +188,7 @@ def compute_shortest_path_between_centers(G , center_nodes , L_max):
                 if path_cost <= L_max / 2:
                     shortest_path_between_centers.append((i , j , sp))
     print('len of crit path set' , len(shortest_path_between_centers))
-def is_feasible_path(path , center_nodes , L_max):
-    
+def is_feasible_path(path , center_nodes , L_max , pair_no , do_print):
     first_node_of_link = path[0]
     current_node = None
     for i in range(1 , len(path) - 1):
@@ -197,15 +196,24 @@ def is_feasible_path(path , center_nodes , L_max):
         if current_node in center_nodes:
             dist = get_distance(first_node_of_link , current_node)
             if dist > L_max:
-                # print(first_node_of_link , current_node , dist)
-                # print(path)
+                if  do_print:
+                    # print('yesssss ' , path)
+                    print(first_node_of_link , current_node , dist)
+                    print('ssssss ' , path)
                 return False
             first_node_of_link = current_node
     last_node_of_link = path[-1]
     dist = get_distance(first_node_of_link , last_node_of_link)
     if dist > L_max:
+        # print('dist > Lmax ' , first_node_of_link , last_node_of_link , dist)
+        # print(path)
+        if  do_print:
+            print(first_node_of_link , current_node , dist)
+            print('ssssssffefe ' , path)
         return False
-    
+    if  do_print:
+        print(first_node_of_link , current_node , dist)
+        print('ssssssffefe return True' , path)
     return True
             
             
@@ -217,18 +225,28 @@ def check_pairs(G, center_nodes , L_max , unique_end_node_pairs , thread_no ):
         print("running for pair:" , pair_no , i , j , "in thread:" , thread_no)
 
         paths = list(nx.all_simple_paths(G, source=i, target=j))
+
         paths.sort(key = len)
 
         feasible_path = None
         path_length = 9999
+        path_count = 0
         for path in paths:
-            # print(path)
-            if is_feasible_path(path , center_nodes , L_max):
-                # print("path len" , len(path))
+            do_print = False
+            if  pair_no == 316 and 'Hilversum' in path and 'Groningen 1' in path:
+                print('pair_no == 316 and Hilversum in path and Groningen 1 in path' , path_count )
+                do_print = True
+            is_feasible = is_feasible_path(path , center_nodes , L_max , pair_no , do_print)
+
+            if is_feasible:
+                print("path len" , len(path))
                 feasible_path = path
                 put_in_file(path , center_nodes ,  thread_no)
                 path_length = len(path)
                 break
+            path_count +=1
+        if pair_no == 316:
+            print(pair_no,len(paths) , path_count)
         if feasible_path is None:
             print("!!!!---------------- !!!!!!!!!!!! NOT feasible !!!!!!!!!! --------------- in thread: " , thread_no )
             # print(path)
