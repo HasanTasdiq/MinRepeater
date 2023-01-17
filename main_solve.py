@@ -1,5 +1,5 @@
 
-from graph_tools import draw_graph, read_graph_from_gml , compute_shortest_path , add_quantum_repeater_between_centers
+from graph_tools import draw_graph, read_graph_from_gml , compute_shortest_path , add_quantum_repeater_between_centers , get_all_path
 from algorithms import compute_center_nodes  , check_solution , choose_as_center
 from util import calculate_output
 import time
@@ -11,9 +11,22 @@ def solve(G , L_max , delta , k):
     print("len of ccccccccc " , len(center_nodes))
 
     compute_shortest_path(G)
-    choose_as_center(G , center_nodes , L_max, k)
+
+    print("+++++++++=========+++++++++++")
+    print("+++++++++=========+++++++++++")
+    print("+++++++++=========+++++++++++")
+    get_all_path(G , center_nodes , L_max , 'Venlo' , 'Groningen 1')
+    print("+++++++++=========+++++++++++")
+    print("+++++++++=========+++++++++++")
+    print("+++++++++=========+++++++++++")
+
+
+
+    # choose_as_center(G , center_nodes , L_max, k)
 
     print("len of cccccccccdddddd " , len(center_nodes))
+
+
 
 
 
@@ -23,16 +36,16 @@ def solve(G , L_max , delta , k):
 
     # print(centers2)
 
-    check_solution(G , center_nodes , L_max , k)
+    # check_solution(G , center_nodes , L_max , k)
 
 
 
-    draw_graph(G , center_nodes)
+    # draw_graph(G , center_nodes)
 
 def main(file_name):
     L_max = 136
     delta =1
-    k = 2
+    k = 1
     G = read_graph_from_gml(file_name)
     print("read from graph done !!")
     print("add_quantum_repeater done!!")

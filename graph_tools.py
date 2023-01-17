@@ -8,6 +8,15 @@ import math
 
 shortest_path_dict = {}
 
+class nodeTree:
+    def __init__(self, node , parent):
+        self.node = node
+        self.parent = parent
+    node = None
+    children = None
+    parent = None
+
+
 def read_graph_from_gml(file):
 
     G = nx.read_gml(file)
@@ -336,3 +345,107 @@ def get_nearest_center(G , node , center_nodes , L_max):
                 if n in center_nodes and get_distance(node , n) <= L_max:
                     return n
     return None
+def calculate_children( G , L_max):
+    children_dict = {}
+    for node in G.nodes():
+        children_dict[node] = list()
+    for i , j in shortest_path_dict:
+        dist = get_distance(i , j)
+        if dist <= L_max:
+            if i in children_dict:
+                children_dict[i].append(j)
+            if j in children_dict:
+                children_dict[j].append(i)
+    
+    # print(children_dict)
+    return children_dict
+def calculate_tree(G , center_nodes , L_max , source):
+    children_dict = calculate_children( G , L_max)
+    children = children_dict[source]
+    root = nodeTree(source , None)
+    # root.children = list()
+    tmp_queue = []
+    tmp_queue.append(source)
+    visited = []
+    visited.append(source)
+
+    current_node = root
+
+
+    # for child in children:
+    #     root.children.append(nodeTree(child))
+
+    while tmp_queue:
+        c = tmp_queue.pop(0)
+        visited.append(c)
+
+        current_node = get_current_node(root , c)
+        if current_node.children is None:
+            current_node.children = list()
+        children = children_dict[c]
+        
+        for child in children:
+            if child not in visited:
+                current_node.children.append(nodeTree(child , current_node))
+                tmp_queue.append(child)
+    return root
+    
+def get_all_path(G , center_nodes , L_max , source , target):
+    root = calculate_tree(G , center_nodes , L_max , source)
+    print('in get_all_path printing root')
+    print(root)
+    
+    tmp_queue = []
+    tmp_queue.append(root)
+    paths = []
+    
+
+    while tmp_queue:
+        c = tmp_queue.pop(0)
+        if c.node == target:
+            print_node(c)
+            paths.append(extract_path(c))
+        else:
+            if c.children is not None:
+                for child in c.children:
+                    tmp_queue.append(child)
+    for path in paths:
+        print(path)
+    return paths
+def print_node(node):
+    print("-------------node------------")
+    print(node.parent.node)
+    print(node.node)
+    if node.children is not None:
+        print(node.children)
+    print("-------------------------")
+    
+
+def extract_path(nodeTree):
+    path = []
+    path.append(nodeTree.node)
+    parent_node = nodeTree.parent
+    while parent_node is not None:
+        path.append(parent_node.node)
+        parent_node = parent_node.parent
+
+    return path.reverse()
+
+def get_current_node(root , node):
+    current_node = root
+    tmp_queue = []
+    tmp_queue.append(root)
+    while tmp_queue:
+        c = tmp_queue.pop(0)
+        if c.node == node:
+            return c
+        else:
+            if c.children is not None:
+                for child in c.children:
+                    tmp_queue.append(child)
+
+    return current_node
+
+
+
+    
