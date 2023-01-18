@@ -16,6 +16,7 @@ def solve(G , L_max , delta , k):
     print("len of cccccccccdddddd " , len(center_nodes))
 
 
+    # center_nodes.update(['Zwolle 1', 'Nijmegen 1', 'Almere', 'Wageningen 1'])
 
     # centers2 = set()
     # # centers2.update(["A'dam 2", 'Zwolle 1', 'Nijmegen 1', 'Utrecht 1', 'Utrecht 2'])

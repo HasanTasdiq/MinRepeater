@@ -267,9 +267,20 @@ def choose_as_center(G , center_nodes , L_max , k):
     center_pairs = list(permutations(center_nodes, 2))
     edge_list = compute_edges_to_choose_more_centers(G , center_nodes , k)
     print('edge list ' , edge_list)
+
+
+    G2 = G.copy()
+    for i in range(0 , k):
+        intermediate_centers = add_intermediate_centers(G2 , L_max , edge_list, center_nodes)
+        for c in intermediate_centers:
+            G2.remove_node(c)
+
+
+    
+def add_intermediate_centers(G , L_max , edge_list, center_nodes ):
+    intermediate_centers = set()
+
     for i , j in edge_list:
-        # i = pair[0]
-        # j = pair[1]
         center1 = i
         (path_cost, sp) = nx.single_source_dijkstra(G=G, source=i, target=j, weight='length')
         if path_cost > L_max:
@@ -279,11 +290,10 @@ def choose_as_center(G , center_nodes , L_max , k):
                 (dist2, sp2) = nx.single_source_dijkstra(G=G, source=center1, target=node2, weight='length')
                 if dist2 > L_max:
                     center_nodes.add(node1)
+                    intermediate_centers.add(node1)
                     center1 = node1
                 node1 = node2
-
-    
-
+    return intermediate_centers
 
 def check_solution(G , center_nodes , L_max , k):
     end_nodes =  [x for x,y in G.nodes(data=True) if y['type']=="repeater_node" or y['type']=="end_node"]

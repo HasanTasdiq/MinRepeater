@@ -154,6 +154,8 @@ def compute_edges_to_place_new_repeaters(G , center_nodes):
 def compute_edges_to_choose_more_centers(G , center_nodes , k):
     edge_list = list()
 
+    
+
     if k ==1:
         edge_list.extend(compute_edges_to_choose_more_centers_k(G , center_nodes))
     else:
