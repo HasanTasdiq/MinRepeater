@@ -361,39 +361,48 @@ def calculate_children( G , L_max):
     return children_dict
 def calculate_tree(G , center_nodes , L_max , source):
     children_dict = calculate_children( G , L_max)
-    children = children_dict[source]
+    # children = children_dict[source]
+    # print("===+++=== len of children " , len(children))
     root = nodeTree(source , None)
     # root.children = list()
     tmp_queue = []
-    tmp_queue.append(source)
+    tmp_queue.append(root)
     visited = []
     visited.append(source)
 
-    current_node = root
 
 
     # for child in children:
     #     root.children.append(nodeTree(child))
 
     while tmp_queue:
-        c = tmp_queue.pop(0)
-        visited.append(c)
+        current_node = tmp_queue.pop(0)
+        print("in while loop for " , current_node.node)
+        # visited.append(c)
 
-        current_node = get_current_node(root , c)
+        # current_node = get_current_node(root , c)
         if current_node.children is None:
             current_node.children = list()
-        children = children_dict[c]
+        children = children_dict[current_node.node]
+        path = extract_path(current_node)
+        print("len of path " , len(path))
+        print("len of tmp queue " , len(tmp_queue))
         
         for child in children:
-            if child not in visited:
-                current_node.children.append(nodeTree(child , current_node))
-                tmp_queue.append(child)
+            if child not in path:
+                new_node = nodeTree(child , current_node)
+                current_node.children.append(new_node)
+                if new_node not in tmp_queue:
+                    tmp_queue.append(new_node)
+        # if c == 'Venlo':
+        #     print('len children for ' , c , len(children))
+        #     # print(tmp_queue)
+        #     print_node(current_node)
     return root
     
 def get_all_path(G , center_nodes , L_max , source , target):
     root = calculate_tree(G , center_nodes , L_max , source)
-    print('in get_all_path printing root')
-    print(root)
+  
     
     tmp_queue = []
     tmp_queue.append(root)
@@ -403,33 +412,40 @@ def get_all_path(G , center_nodes , L_max , source , target):
     while tmp_queue:
         c = tmp_queue.pop(0)
         if c.node == target:
-            print_node(c)
+            # print_node(c)
             paths.append(extract_path(c))
         else:
             if c.children is not None:
                 for child in c.children:
                     tmp_queue.append(child)
-    for path in paths:
-        print(path)
+    # for path in paths:
+    #     print(path)
+
+    paths2 = list(nx.all_simple_paths(G, source=source, target=target))
+    print("len from simple path " , len(paths2))
+    print("len from new path " , len(paths))
+
     return paths
 def print_node(node):
     print("-------------node------------")
-    print(node.parent.node)
+    # print(node.parent.node)
     print(node.node)
     if node.children is not None:
-        print(node.children)
+        for child in node.children:
+            print(child.node)
     print("-------------------------")
     
 
 def extract_path(nodeTree):
-    path = []
+    path = list()
     path.append(nodeTree.node)
     parent_node = nodeTree.parent
     while parent_node is not None:
         path.append(parent_node.node)
         parent_node = parent_node.parent
 
-    return path.reverse()
+    # print("==== " , path[::-1])
+    return path[::-1]
 
 def get_current_node(root , node):
     current_node = root
