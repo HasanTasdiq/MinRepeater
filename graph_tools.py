@@ -462,6 +462,17 @@ def get_current_node(root , node):
 
     return current_node
 
+def common_member(a, b):   
+    a_set = set(a)
+    b_set = set(b)
+     
+    # check length
+    if len(a_set.intersection(b_set)) > 0:
+        return(a_set.intersection(b_set)) 
+    else:
+        return None
+
+
 
 
     

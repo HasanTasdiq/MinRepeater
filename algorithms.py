@@ -1,5 +1,5 @@
 import networkx as nx
-from graph_tools import shortest_path_dict , get_distance_between_nodes, get_distance , draw_graph , compute_edges_to_choose_more_centers
+from graph_tools import shortest_path_dict , get_distance_between_nodes, get_distance , draw_graph , compute_edges_to_choose_more_centers , calculate_children , common_member
 from util import kill_all , no_of_thread , get_nearest_node
 import random
 import itertools
@@ -263,13 +263,30 @@ def check_pairs_k(G, center_nodes , L_max , unique_end_node_pairs , thread_no ):
 
 
 def choose_as_center(G , center_nodes , L_max , k):
-
+    chosen_quantum_repeaters = set()
     center_pairs = list(permutations(center_nodes, 2))
     edge_list = compute_edges_to_choose_more_centers(G , center_nodes , k)
-    print('edge list ' , edge_list)
+    reversed_node_parent_dict = get_common_nodes(G , center_nodes , L_max , k)
+    centers_dict = {}
+    for center in center_nodes:
+        centers_dict[center] = k
+    for new_repeater in list(reversed_node_parent_dict):
+        # new_repeater = list(reversed_node_parent_dict)[0]
+        covered_centers = reversed_node_parent_dict[new_repeater]
+        for covering_center in covered_centers:
+            if covering_center in centers_dict:
+                chosen_quantum_repeaters.add(new_repeater)
+                centers_dict[covering_center] = centers_dict[covering_center] - 1
+                if  centers_dict[covering_center] <=0:
+                    del centers_dict[covering_center]
+                    
+        
+    # print('edge list ' , edge_list)
     for i , j in edge_list:
         # i = pair[0]
         # j = pair[1]
+        if i not in centers_dict and j not in centers_dict:
+            continue
         center1 = i
         (path_cost, sp) = nx.single_source_dijkstra(G=G, source=i, target=j, weight='length')
         if path_cost > L_max:
@@ -278,10 +295,13 @@ def choose_as_center(G , center_nodes , L_max , k):
                 node2 = sp[n]
                 (dist2, sp2) = nx.single_source_dijkstra(G=G, source=center1, target=node2, weight='length')
                 if dist2 > L_max:
-                    center_nodes.add(node1)
+                    chosen_quantum_repeaters.add(node1)
                     center1 = node1
                 node1 = node2
-
+    print('--------------chosen_quantum_repeaters------------')
+    print(chosen_quantum_repeaters)
+    print('--------------------------------------------------')
+    center_nodes.update(chosen_quantum_repeaters)
     
 
 
@@ -325,7 +345,35 @@ def put_in_file(path , center_nodes , thread_no):
     f.write(center_str)
     f.close()
 
+def get_common_nodes(G , center_nodes , L_max , k):
+    children_dict = calculate_children( G , L_max)
+    reversed_node_parent_dict = {}
+    center_pairs_dict = {}
 
+    edge_list = compute_edges_to_choose_more_centers(G , center_nodes , k)
+
+    for i , j in edge_list:
+        children1 = children_dict[i]
+        children2 = children_dict[j]
+        common_children = common_member(children1 , children2)
+        if common_children is not None:
+            
+            for ch in common_children:
+                if ch not in reversed_node_parent_dict:
+                    parent_set = {i , j}
+                    reversed_node_parent_dict[ch] = parent_set
+                else:
+                    parent_set = reversed_node_parent_dict[ch]
+                    parent_set.update({i , j})
+                    reversed_node_parent_dict[ch] = parent_set
+            center_pairs_dict[(i , j)] = common_children
+    
+    sorted_dict = dict(sorted(reversed_node_parent_dict.items(), key=lambda item: -len(item[1])))
+    # print(list(sorted_dict))
+    # print(sorted_dict)
+
+
+    return sorted_dict
     
                 
 
