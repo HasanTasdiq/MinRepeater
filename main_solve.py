@@ -1,6 +1,6 @@
 
 from graph_tools import draw_graph, read_graph_from_gml , compute_shortest_path , add_quantum_repeater_between_centers , get_all_path
-from algorithms import compute_center_nodes  , check_solution , choose_as_center , get_common_nodes
+from algorithms import compute_center_nodes  , check_solution , choose_as_center 
 from util import calculate_output
 import time
 
@@ -16,13 +16,12 @@ def solve(G , L_max , delta , k):
     # print("+++++++++=========+++++++++++")
     # print("+++++++++=========+++++++++++")
     # get_all_path(G , center_nodes , L_max , 'Venlo' , 'Groningen 1')
-    # get_common_nodes(G , center_nodes , L_max , k)
 
     # print("+++++++++=========+++++++++++")
     # print("+++++++++=========+++++++++++")
     # print("+++++++++=========+++++++++++")
 
-    draw_graph(G , center_nodes)
+    # draw_graph(G , center_nodes)
 
 
     choose_as_center(G , center_nodes , L_max, k)
@@ -35,7 +34,7 @@ def solve(G , L_max , delta , k):
 
     # centers2 = set()
     # # centers2.update(["A'dam 2", 'Zwolle 1', 'Nijmegen 1', 'Utrecht 1', 'Utrecht 2'])
-    # centers2.update([   'Groningen 1' ])
+    # centers2.update(['Zwolle 1', 'Almere', 'Utrecht 1', 'Breda 1', 'Deventer'])
 
     # print(centers2)
 
@@ -43,7 +42,7 @@ def solve(G , L_max , delta , k):
 
 
 
-    draw_graph(G , center_nodes)
+    # draw_graph(G , center_nodes)
 
 def main(file_name):
     L_max = 136

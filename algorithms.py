@@ -266,7 +266,7 @@ def choose_as_center(G , center_nodes , L_max , k):
     chosen_quantum_repeaters = set()
     center_pairs = list(permutations(center_nodes, 2))
     edge_list = compute_edges_to_choose_more_centers(G , center_nodes , k)
-    reversed_node_parent_dict = get_common_nodes(G , center_nodes , L_max , k)
+    reversed_node_parent_dict = get_node_parent_dict(G , center_nodes , L_max , k)
     centers_dict = {}
     for center in center_nodes:
         centers_dict[center] = k
@@ -345,7 +345,7 @@ def put_in_file(path , center_nodes , thread_no):
     f.write(center_str)
     f.close()
 
-def get_common_nodes(G , center_nodes , L_max , k):
+def get_node_parent_dict(G , center_nodes , L_max , k):
     children_dict = calculate_children( G , L_max)
     reversed_node_parent_dict = {}
     center_pairs_dict = {}
