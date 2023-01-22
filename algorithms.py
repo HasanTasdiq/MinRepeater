@@ -160,7 +160,8 @@ def skip_end_nodes(G , nodes):
         if G.degree(node) == 1:
             if node in nodes:
                 nodes.remove(node)
-            G.nodes[node]['type'] = 'end_node'
+            
+
 
 def get_far_node_from_all_center(center_nodes , temp_list):
     prev_dist = 0

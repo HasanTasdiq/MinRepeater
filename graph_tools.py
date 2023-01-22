@@ -39,7 +39,7 @@ def read_graph_from_gml(file):
 
         if 'type' not in nodedata or nodedata['type'] != 'end_node':
             nodedata['type'] = 'repeater_node'
-
+    find_end_nodes(G)
     
     _compute_dist_lat_lon(G)
 
@@ -190,6 +190,7 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max , k):
     print("====================== number of nodes 1 " , G.number_of_nodes() , " ===================================")
     # print("type: " , G.nodes["SNLCA"]['type'])
     edge_list = compute_edges_to_place_new_repeaters(G , center_nodes)
+    print("edge list len " , len(edge_list))
 
     q_node  = 0
     q_node_list = []
@@ -231,13 +232,13 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max , k):
             lon3 = lon1
             node1 = i
             node2 = i
-            # no_of_slice = (int(length / (L_max )) + 1) * k
-            # placement_dist = length / no_of_slice
-            # for it in range(1 ,  no_of_slice):
+            no_of_slice = (int(length / (L_max )) + 1) * k
+            placement_dist = length / no_of_slice
+            for it in range(1 ,  no_of_slice):
 
 
-            placement_dist = length / (int(length / L_max) + 1)
-            for it in range(1 ,  int(length / L_max) + 1):
+            # placement_dist = length / (int(length / L_max) + 1)
+            # for it in range(1 ,  int(length / L_max) + 1):
 
                 node_data = {}
                 dist = it * placement_dist
@@ -476,6 +477,10 @@ def common_member(a, b):
         return(a_set.intersection(b_set)) 
     else:
         return None
+def find_end_nodes(G):
+    for node in G.nodes():
+        if G.degree(node) == 1:
+            G.nodes[node]['type'] = 'end_node'
 
 
 
