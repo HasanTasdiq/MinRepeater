@@ -7,7 +7,7 @@ import time
 def solve(G , L_max , delta , k):
     center_nodes = compute_center_nodes(G , L_max, delta , k)
     print("len of c " , len(center_nodes) , center_nodes)
-    add_quantum_repeater_between_centers(G , center_nodes , L_max * .95   )
+    add_quantum_repeater_between_centers(G , center_nodes , L_max * .95  , k )
     print("len of ccccccccc " , len(center_nodes))
 
     compute_shortest_path(G)
@@ -38,16 +38,16 @@ def solve(G , L_max , delta , k):
 
     # print(centers2)
 
-    # check_solution(G , center_nodes , L_max , k)
+    check_solution(G , center_nodes , L_max , k)
 
 
 
     # draw_graph(G , center_nodes)
 
 def main(file_name):
-    L_max = 136
+    L_max = 130
     delta =1
-    k = 3
+    k = 1
     G = read_graph_from_gml(file_name)
     print("read from graph done !!")
     print("add_quantum_repeater done!!")
@@ -65,8 +65,8 @@ def main(file_name):
 
 if __name__ == "__main__":
     start = time.time()
-    # main('es_net.gml')
-    main('SurfnetCore.gml')
+    main('es_net.gml')
+    # main('SurfnetCore.gml')
     end = time.time()
 
     print("time taken:" , end - start , "sec")

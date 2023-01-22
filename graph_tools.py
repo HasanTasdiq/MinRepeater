@@ -186,7 +186,7 @@ def compute_edges_to_choose_more_centers_k(G , center_nodes):
     
     return edge_list
 
-def add_quantum_repeater_between_centers( G , center_nodes , L_max):
+def add_quantum_repeater_between_centers( G , center_nodes , L_max , k):
     print("====================== number of nodes 1 " , G.number_of_nodes() , " ===================================")
     # print("type: " , G.nodes["SNLCA"]['type'])
     edge_list = compute_edges_to_place_new_repeaters(G , center_nodes)
@@ -231,6 +231,11 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
             lon3 = lon1
             node1 = i
             node2 = i
+            # no_of_slice = (int(length / (L_max )) + 1) * k
+            # placement_dist = length / no_of_slice
+            # for it in range(1 ,  no_of_slice):
+
+
             placement_dist = length / (int(length / L_max) + 1)
             for it in range(1 ,  int(length / L_max) + 1):
 
@@ -248,8 +253,8 @@ def add_quantum_repeater_between_centers( G , center_nodes , L_max):
                     continue
                 lat3 , lon3 = get_intermediate_point(lat1 , lon1 , lat2 , lon2 , dist)
                 # print(lat1 , lon1 , lat3 , lon3)
-                # if i == 'SNLCA' or j == 'SNLCA':
-                #     print(i , j , placement_dist , length1 , dist , center1 , center2 , get_distance(center1 , i) , G[i][j]['length'])
+                if i == 'LBNL' or j == 'LBNL':
+                    print(i , j , placement_dist , length1 , dist , center1 , center2 , get_distance(center1 , i) , G[i][j]['length'])
 
                 node2 = "QN" +str(q_node) 
                 node_data['node'] = node2
