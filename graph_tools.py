@@ -146,7 +146,7 @@ def compute_mst_centers(G , center_nodes):
     # draw_graph(T , [])
     return T
 
-def compute_edges_to_place_new_repeaters(G , center_nodes):
+def compute_edges_to_place_new_repeaters_k(G , center_nodes):
     T = compute_mst_centers(G , center_nodes)
     edge_list = list()
     for i , j in T.edges():
@@ -160,6 +160,22 @@ def compute_edges_to_place_new_repeaters(G , center_nodes):
             edge_list.append(list(G.edges(node))[0])
     
     return edge_list
+
+def compute_edges_to_place_new_repeaters(G , center_nodes , k):
+    edge_list = set()
+
+    if k ==1:
+        edge_list.update(compute_edges_to_place_new_repeaters_k(G , center_nodes))
+    else:
+        random_down_nodes_ = list(itertools.combinations(center_nodes, r=k-1))
+        for tup in random_down_nodes_:
+            G2 = G.copy()
+            for i in range(k-1):
+                G2.remove_node(tup[i])
+            edge_list.update(compute_edges_to_place_new_repeaters_k(G2 , center_nodes))
+    return edge_list
+
+
 def compute_edges_to_choose_more_centers(G , center_nodes , k):
     edge_list = set()
 
@@ -480,7 +496,8 @@ def common_member(a, b):
 def find_end_nodes(G):
     for node in G.nodes():
         if G.degree(node) == 1:
-            G.nodes[node]['type'] = 'end_node'
+            G.remove_node(node)
+            # G.nodes[node]['type'] = 'end_node'
 
 
 
