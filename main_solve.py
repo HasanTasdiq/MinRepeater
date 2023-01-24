@@ -6,14 +6,14 @@ import time
 
 def solve(G , L_max , delta):
     center_nodes = compute_center_nodes(G , L_max, delta)
-    print("len of c " , len(center_nodes))
+    print("number of centers " , len(center_nodes))
     add_quantum_repeater_between_centers(G , center_nodes , L_max * .95   )
-    print("len of ccccccccc " , len(center_nodes))
+    print("number of centers after adding new repeaters " , len(center_nodes))
 
     compute_shortest_path(G)
     choose_as_center(G , center_nodes , L_max)
 
-    print("len of cccccccccdddddd " , len(center_nodes))
+    print("number of final quantum repeaters " , len(center_nodes))
 
 
 

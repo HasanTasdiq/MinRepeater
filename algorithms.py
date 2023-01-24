@@ -261,7 +261,7 @@ def choose_as_center(G , center_nodes , L_max):
 
     center_pairs = list(permutations(center_nodes, 2))
     edge_list = compute_edges_to_choose_more_centers(G , center_nodes)
-    print('edge list ' , edge_list)
+    # print('edge list ' , edge_list)
     for i , j in edge_list:
         # i = pair[0]
         # j = pair[1]
