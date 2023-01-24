@@ -5,28 +5,18 @@ from util import calculate_output
 import time
 
 def solve(G , L_max , delta , k):
-    center_nodes = compute_center_nodes(G , L_max, delta , k)
+    center_nodes , mandatory_centers = compute_center_nodes(G , L_max, delta , k)
     print("len of c " , len(center_nodes) , center_nodes)
-    add_quantum_repeater_between_centers(G , center_nodes , L_max * .95  , k )
+    add_quantum_repeater_between_centers(G , center_nodes , mandatory_centers , L_max * .95  , k )
+    print("add_quantum_repeater done!!")
     print("len of ccccccccc " , len(center_nodes))
 
     compute_shortest_path(G)
 
-    # print("+++++++++=========+++++++++++")
-    # print("+++++++++=========+++++++++++")
-    # print("+++++++++=========+++++++++++")
-    # get_all_path(G , center_nodes , L_max , 'Venlo' , 'Groningen 1')
-
-    # print("+++++++++=========+++++++++++")
-    # print("+++++++++=========+++++++++++")
-    # print("+++++++++=========+++++++++++")
-
-    # draw_graph(G , center_nodes)
-
 
     choose_as_center(G , center_nodes , L_max, k)
 
-    # print("len of cccccccccdddddd " , len(center_nodes))
+    print("len of cccccccccdddddd " , len(center_nodes))
 
 
 
@@ -38,26 +28,26 @@ def solve(G , L_max , delta , k):
 
     # print(centers2)
 
-    check_solution(G , center_nodes , L_max , k)
+    # check_solution(G , center_nodes , L_max , k)
 
 
 
     # draw_graph(G , center_nodes)
 
 def main(file_name):
-    L_max = 130
+    L_max = 50
     delta =1
-    k = 1
+    k = 3
     G = read_graph_from_gml(file_name)
     print("read from graph done !!")
-    print("add_quantum_repeater done!!")
+    
     compute_shortest_path(G)
 
     print("compute_shortest_path done!!")
     solve(G , L_max , delta , k)
     # print("calculating output")
 
-    out_set = calculate_output(G)
+    # out_set = calculate_output(G)
     # draw_graph(G , out_set)
 
     
@@ -65,8 +55,8 @@ def main(file_name):
 
 if __name__ == "__main__":
     start = time.time()
-    main('es_net.gml')
-    # main('SurfnetCore.gml')
+    # main('es_net.gml')
+    main('SurfnetCore.gml')
     end = time.time()
 
     print("time taken:" , end - start , "sec")

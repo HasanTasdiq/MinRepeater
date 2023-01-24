@@ -202,10 +202,10 @@ def compute_edges_to_choose_more_centers_k(G , center_nodes):
     
     return edge_list
 
-def add_quantum_repeater_between_centers( G , center_nodes , L_max , k):
+def add_quantum_repeater_between_centers( G , center_nodes , mandatory_centers , L_max , k):
     print("====================== number of nodes 1 " , G.number_of_nodes() , " ===================================")
     # print("type: " , G.nodes["SNLCA"]['type'])
-    edge_list = compute_edges_to_place_new_repeaters(G , center_nodes)
+    edge_list = compute_edges_to_place_new_repeaters(G , center_nodes , k)
     print("edge list len " , len(edge_list))
 
     q_node  = 0
@@ -494,10 +494,13 @@ def common_member(a, b):
     else:
         return None
 def find_end_nodes(G):
+    end_nodes = []
     for node in G.nodes():
         if G.degree(node) == 1:
-            G.remove_node(node)
+            end_nodes.append(node)
             # G.nodes[node]['type'] = 'end_node'
+    for node in end_nodes:
+        G.remove_node(node)
 
 
 

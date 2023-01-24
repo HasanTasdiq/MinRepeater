@@ -16,35 +16,36 @@ terminate = False
 
 def compute_center_nodes(G , L_max , delta , k):
     center_nodes = set()
+    mandatory_centers = set()
     G2 = G.copy()
-
+    mandatory_centers =center_nodes
     for i in range(0 , k):
-        center_nodes_i = get_center_nodes(G2 , L_max , delta )
+        center_nodes_i = get_center_nodes(G2 , center_nodes,  L_max , delta , k)
         center_nodes.update(center_nodes_i)
         for c in center_nodes_i:
             G2.remove_node(c)
-    return center_nodes
+    # print('==================child parent===================')
+    # print(get_node_parent_dict(G , center_nodes , L_max , k))
+    # print('=================================================')
+    return center_nodes , mandatory_centers
 
-def get_center_nodes(G , L_max , delta ):
-    # print("sssssss " , get_distance('A\'dam 2' , 'Westerbork'))
-    # print("sssssss " , get_distance('PNNL' , 'NETL-ALB'))
-    # print("sssssss " , get_distance('Nijmegen 1' , 'Utrecht 1'))
+def get_center_nodes(G , chosen_center_nodes, L_max , delta ,k):
+
     center_nodes = set()
     nodes = list(G.nodes())
-    # print("len of nodes " , len(nodes))
-    # initial_center_node = None
-    # for node in nodes:
-    #     if G.degree[node] > 1:
-    #         initial_center_node = node
-    #         break
 
-    # nodes.remove(initial_center_node)
-
-
+    for node in G.nodes():
+        in_circle = 0
+        for c in chosen_center_nodes:
+            if get_distance(node , c) <= L_max * delta:
+                in_circle += 1
+        if in_circle >= k:
+            nodes.remove(node)
 
     compute_mandatory_centers(G , center_nodes , L_max)
 
-    if len(center_nodes) <= 1:
+
+    if len(center_nodes) < 1:
         # initial_center_node = nodes[random.randint(0, len(nodes) - 1)]
         # initial_center_node = "A'dam 2"
         initial_center_node = get_initial_node(G , L_max * delta)
