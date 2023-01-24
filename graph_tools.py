@@ -134,7 +134,7 @@ def compute_mst_centers(G , center_nodes):
                 # print('path cost ' , i , j , path_cost)
     
     T = nx.minimum_spanning_tree(H , weight='length')
-    draw_graph(T , [])
+    # draw_graph(T , [])
     return T
 
 def compute_edges_to_place_new_repeaters(G , center_nodes):

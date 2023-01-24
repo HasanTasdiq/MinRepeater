@@ -22,14 +22,14 @@ def solve(G , L_max , delta):
 
     # print(centers2)
 
-    check_solution(G , center_nodes , L_max)
+    # check_solution(G , center_nodes , L_max)
 
 
 
-    draw_graph(G , center_nodes)
+    # draw_graph(G , center_nodes)
 
 def main(file_name):
-    L_max = 136
+    L_max = 40
     delta =1
     G = read_graph_from_gml(file_name)
     print("read from graph done !!")
@@ -40,7 +40,7 @@ def main(file_name):
     solve(G , L_max , delta)
     # print("calculating output")
 
-    out_set = calculate_output(G)
+    # out_set = calculate_output(G)
     # draw_graph(G , out_set)
 
     
