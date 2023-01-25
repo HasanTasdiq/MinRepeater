@@ -330,9 +330,9 @@ def choose_as_center(G , center_nodes , L_max , k):
                     chosen_quantum_repeaters.add(node1)
                     center1 = node1
                 node1 = node2
-    print('--------------chosen_quantum_repeaters------------')
-    print(chosen_quantum_repeaters)
-    print('--------------------------------------------------')
+    # print('--------------chosen_quantum_repeaters------------')
+    # print(chosen_quantum_repeaters)
+    # print('--------------------------------------------------')
     center_nodes.update(chosen_quantum_repeaters)
     
 

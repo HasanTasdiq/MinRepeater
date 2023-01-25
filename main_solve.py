@@ -6,10 +6,10 @@ import time
 
 def solve(G , L_max , delta , k):
     center_nodes , mandatory_centers = compute_center_nodes(G , L_max, delta , k)
-    print("len of c " , len(center_nodes) , center_nodes)
+    print("number of centers " , len(center_nodes) )
     add_quantum_repeater_between_centers(G , center_nodes , mandatory_centers , L_max * .95  , k )
     print("add_quantum_repeater done!!")
-    print("len of ccccccccc " , len(center_nodes))
+    print("number of centers after adding new rep " , len(center_nodes))
 
     compute_shortest_path(G)
 
@@ -35,9 +35,9 @@ def solve(G , L_max , delta , k):
     # draw_graph(G , center_nodes)
 
 def main(file_name):
-    L_max = 50
+    L_max = 130
     delta =1
-    k = 3
+    k = 1
     G = read_graph_from_gml(file_name)
     print("read from graph done !!")
     
