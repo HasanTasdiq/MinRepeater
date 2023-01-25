@@ -57,35 +57,37 @@ def compute_center_nodes(G , L_max , delta):
 
         temp_list = set()
 
-        for c_node in center_nodes:
+        for node in nodes:
             chosen_center = None
-            max_len = L_max * delta
-            for node in nodes:
-                if node in temp_list:
-                    # print("yes in temp")
+            min_len = 9999
+            if G.degree[node] <=1:
+                nearest_node = get_nearest_node(G , node)
+                d = get_distance(node , nearest_node)
+                # if len(center_nodes) == 1:
+                #     print(node , nearest_node , d)
+                if d <= L_max * delta :
                     continue
-                if G.degree[node] <=1:
-                    nearest_node = get_nearest_node(G , node)
-                    d = get_distance(node , nearest_node)
-                    # if len(center_nodes) == 1:
-                    #     print(node , nearest_node , d)
-                    if d <= L_max * delta :
-                        continue
+            if node in temp_list:
+                continue
+            for c_node in center_nodes:
+
+
                 dist = get_distance(c_node , node)
                 # adding weight
                 # if G.nodes[node]["type"] == "new_repeater_node":
                 #     dist = dist * .7
-                if dist > max_len:
-                    max_len = dist
+                if dist < min_len:
+                    min_len = dist
                     chosen_center = node
                     # print("dist " , dist , "m l" , max_len)
 
             if chosen_center is not None:
-                temp_list.add(chosen_center)
+                temp_list.add((chosen_center , min_len))
         
 
 
-        center , d = get_far_node_from_all_center(center_nodes , temp_list)
+        center , d = get_far_node_from_all_center( temp_list)
+
 
         if d >= L_max * delta:
             center_nodes.add(center)
@@ -152,22 +154,32 @@ def skip_end_nodes(G , nodes):
                 nodes.remove(node)
             G.nodes[node]['type'] = 'end_node'
 
-def get_far_node_from_all_center(center_nodes , temp_list):
-    prev_dist = 0
+# def get_far_node_from_all_center(center_nodes , temp_list):
+#     prev_dist = 0
     
-    chosen_center2 = None
-    for node  in temp_list:
-        min_dist = 99999
-        chosen_center = None
-        for c_node in center_nodes:
-            if get_distance(node , c_node) < min_dist:
-                min_dist  = get_distance(node , c_node)
-                chosen_center = node
+#     chosen_center2 = None
+#     for node  in temp_list:
+#         min_dist = 99999
+#         chosen_center = None
+#         for c_node in center_nodes:
+#             if get_distance(node , c_node) < min_dist:
+#                 min_dist  = get_distance(node , c_node)
+#                 chosen_center = node
 
-        if min_dist > prev_dist and chosen_center is not None:
-            chosen_center2 = chosen_center
-            prev_dist = min_dist
-    return chosen_center2 , prev_dist
+#         if min_dist > prev_dist and chosen_center is not None:
+#             chosen_center2 = chosen_center
+#             prev_dist = min_dist
+#     return chosen_center2 , prev_dist
+
+def get_far_node_from_all_center(temp_list):
+    max_dist = 0
+    chosen_center = None
+    for node , dist in temp_list:
+        if dist > max_dist:
+            chosen_center = node
+            max_dist = dist
+    return chosen_center , max_dist
+
 def remove_nodes_inside_circle(center , nodes , radius):
     nodes_inside_circle = []
     for node in nodes:
