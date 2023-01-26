@@ -30,9 +30,9 @@ def compute_center_nodes(G , L_max , delta , k):
     return center_nodes , mandatory_centers
 
 def get_center_nodes(G , chosen_center_nodes, L_max , delta ,k):
-
     center_nodes = set()
     nodes = list(G.nodes())
+    already_covered_nodes = set()
 
     for node in G.nodes():
         in_circle = 0
@@ -43,8 +43,6 @@ def get_center_nodes(G , chosen_center_nodes, L_max , delta ,k):
             nodes.remove(node)
 
     compute_mandatory_centers(G , center_nodes , L_max)
-
-
     if len(center_nodes) < 1:
         # initial_center_node = nodes[random.randint(0, len(nodes) - 1)]
         # initial_center_node = "A'dam 2"
@@ -56,66 +54,107 @@ def get_center_nodes(G , chosen_center_nodes, L_max , delta ,k):
     for c in center_nodes:
         if c in nodes:
             nodes.remove(c)
-        remove_nodes_inside_circle(c , nodes , L_max*delta)
+        covered_nodes = remove_nodes_inside_circle(c , nodes , L_max*delta)
+        already_covered_nodes.update(covered_nodes)
     skip_end_nodes(G , nodes)
 
-    max_len = L_max * delta
-    while max_len >= L_max * delta:
-        # print("len of nodes " , len(nodes))
-
-        dist = 0
-        
-
-        temp_list = set()
-
-        for node in nodes:
-            chosen_center = None
-            min_len = 9999
-            if G.degree[node] <=1:
-                nearest_node = get_nearest_node(G , node)
-                d = get_distance(node , nearest_node)
-                # if len(center_nodes) == 1:
-                #     print(node , nearest_node , d)
-                if d <= L_max * delta :
-                    continue
-            if node in temp_list:
-                continue
-            for c_node in center_nodes:
-
-
-                dist = get_distance(c_node , node)
-                # adding weight
-                # if G.nodes[node]["type"] == "new_repeater_node":
-                #     dist = dist * .7
-                if dist < min_len:
-                    min_len = dist
-                    chosen_center = node
-                    # print("dist " , dist , "m l" , max_len)
-
-            if chosen_center is not None:
-                temp_list.add((chosen_center , min_len))
-        
-
-
-        center , d = get_far_node_from_all_center( temp_list)
-
-
-        if d >= L_max * delta:
-            center_nodes.add(center)
-            # print("chosen " , center , d)
-            nodes.remove(center)
-            max_len = d
-            remove_nodes_inside_circle(center , nodes , L_max*delta)
-
-        else:
+    while True:
+        center = get_center_with_max_node(G , L_max*delta , already_covered_nodes , center_nodes)
+        if center is None:
             break
+        center_nodes.add(center)
+        covered_nodes = remove_nodes_inside_circle(center , nodes , L_max*delta)
+        already_covered_nodes.update(covered_nodes)
+        # draw_graph(G , center_nodes)
+    return center_nodes
+
+# def get_center_nodes(G , chosen_center_nodes, L_max , delta ,k):
+
+#     center_nodes = set()
+#     nodes = list(G.nodes())
+
+#     for node in G.nodes():
+#         in_circle = 0
+#         for c in chosen_center_nodes:
+#             if get_distance(node , c) <= L_max * delta:
+#                 in_circle += 1
+#         if in_circle >= k:
+#             nodes.remove(node)
+
+#     compute_mandatory_centers(G , center_nodes , L_max)
+
+
+#     if len(center_nodes) < 1:
+#         # initial_center_node = nodes[random.randint(0, len(nodes) - 1)]
+#         # initial_center_node = "A'dam 2"
+#         initial_center_node = get_initial_node(G , L_max * delta)
+
+#         print('init center:', initial_center_node)
+#         center_nodes.add(initial_center_node)
+
+#     for c in center_nodes:
+#         if c in nodes:
+#             nodes.remove(c)
+#         remove_nodes_inside_circle(c , nodes , L_max*delta)
+#     skip_end_nodes(G , nodes)
+
+#     max_len = L_max * delta
+#     while max_len >= L_max * delta:
+#         # print("len of nodes " , len(nodes))
+
+#         dist = 0
+        
+
+#         temp_list = set()
+
+#         for node in nodes:
+#             chosen_center = None
+#             min_len = 9999
+#             if G.degree[node] <=1:
+#                 nearest_node = get_nearest_node(G , node)
+#                 d = get_distance(node , nearest_node)
+#                 # if len(center_nodes) == 1:
+#                 #     print(node , nearest_node , d)
+#                 if d <= L_max * delta :
+#                     continue
+#             if node in temp_list:
+#                 continue
+#             for c_node in center_nodes:
+
+
+#                 dist = get_distance(c_node , node)
+#                 # adding weight
+#                 # if G.nodes[node]["type"] == "new_repeater_node":
+#                 #     dist = dist * .7
+#                 if dist < min_len:
+#                     min_len = dist
+#                     chosen_center = node
+#                     # print("dist " , dist , "m l" , max_len)
+
+#             if chosen_center is not None:
+#                 temp_list.add((chosen_center , min_len))
+        
+
+
+#         center , d = get_far_node_from_all_center( temp_list)
+
+
+#         if d >= L_max * delta:
+#             center_nodes.add(center)
+#             # print("chosen " , center , d)
+#             nodes.remove(center)
+#             max_len = d
+#             remove_nodes_inside_circle(center , nodes , L_max*delta)
+
+#         else:
+#             break
         
 
     
-    print('center_nodes len' , len(center_nodes))
+#     print('center_nodes len' , len(center_nodes))
 
-    # print("==== t d " , t_d)
-    return center_nodes
+#     # print("==== t d " , t_d)
+#     return center_nodes
 
 
 def get_initial_node(G , radius):
@@ -131,7 +170,20 @@ def get_initial_node(G , radius):
             max_nodes_inside_circle = nodes_inside_circle
 
     return init_node
-        
+
+def get_center_with_max_node(G , radius , already_covered_nodes , center_nodes):
+    max_nodes_inside_circle = 0
+    center_node = None
+    for node1 in G.nodes():
+        nodes_inside_circle = 0
+        for node2 in G.nodes():
+            if node1 != node2 and get_distance(node1 , node2) <= radius and node1 not in center_nodes and node1 not in already_covered_nodes:
+                nodes_inside_circle += 1
+        if nodes_inside_circle > max_nodes_inside_circle:
+            center_node = node1
+            max_nodes_inside_circle = nodes_inside_circle
+
+    return center_node
 
 def get_end_nodes(G , node):
     end_nodes = []
@@ -201,6 +253,7 @@ def remove_nodes_inside_circle(center , nodes , radius):
     for node in nodes_inside_circle:
         if node in nodes:
             nodes.remove(node)
+    return nodes_inside_circle
 
 def compute_shortest_path_between_centers(G , center_nodes , L_max):
     shortest_path_between_centers = []

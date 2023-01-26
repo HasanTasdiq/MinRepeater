@@ -498,9 +498,9 @@ def find_end_nodes(G):
     for node in G.nodes():
         if G.degree(node) == 1:
             end_nodes.append(node)
-            # G.nodes[node]['type'] = 'end_node'
-    for node in end_nodes:
-        G.remove_node(node)
+            G.nodes[node]['type'] = 'end_node'
+    # for node in end_nodes:
+    #     G.remove_node(node)
 
 
 
