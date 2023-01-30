@@ -21,18 +21,32 @@ def compute_center_nodes(G , L_max , delta , k):
     mandatory_centers =center_nodes
     for i in range(0 , k):
         center_nodes_i = get_center_nodes(G2 , center_nodes,  L_max , delta , k)
+        print('for ' , i , ' number of center ' , len(center_nodes_i))
         center_nodes.update(center_nodes_i)
-        for c in center_nodes_i:
-            G2.remove_node(c)
+        # for c in center_nodes_i:
+        #     G2.remove_node(c)
     # print('==================child parent===================')
     # print(get_node_parent_dict(G , center_nodes , L_max , k))
     # print('=================================================')
     return center_nodes , mandatory_centers
 
 def get_center_nodes(G , chosen_center_nodes, L_max , delta ,k):
+    center_nodes1 = get_center_nodes1(G , chosen_center_nodes, L_max , delta ,k)
+    center_nodes2 = get_center_nodes2(G , chosen_center_nodes, L_max , delta ,k)
+
+    if len(center_nodes1) <= len(center_nodes2):
+        return center_nodes1
+    else:
+        return center_nodes2
+
+
+def get_center_nodes1(G , chosen_center_nodes, L_max , delta ,k):
     center_nodes = set()
     nodes = list(G.nodes())
     already_covered_nodes = set()
+
+    for c in chosen_center_nodes:
+        nodes.remove(c)
 
     for node in G.nodes():
         in_circle = 0
@@ -40,12 +54,13 @@ def get_center_nodes(G , chosen_center_nodes, L_max , delta ,k):
             if get_distance(node , c) <= L_max * delta:
                 in_circle += 1
         if in_circle >= k:
-            nodes.remove(node)
+            if node in nodes:
+                nodes.remove(node)
 
     compute_mandatory_centers(G , center_nodes , L_max)
     if len(center_nodes) < 1:
         # initial_center_node = nodes[random.randint(0, len(nodes) - 1)]
-        # initial_center_node = "A'dam 2"
+        # initial_center_node = "Apeldoorn"
         initial_center_node = get_initial_node(G , L_max * delta)
 
         print('init center:', initial_center_node)
@@ -68,93 +83,97 @@ def get_center_nodes(G , chosen_center_nodes, L_max , delta ,k):
         # draw_graph(G , center_nodes)
     return center_nodes
 
-# def get_center_nodes(G , chosen_center_nodes, L_max , delta ,k):
+def get_center_nodes2(G , chosen_center_nodes, L_max , delta ,k):
 
-#     center_nodes = set()
-#     nodes = list(G.nodes())
+    center_nodes = set()
+    nodes = list(G.nodes())
 
-#     for node in G.nodes():
-#         in_circle = 0
-#         for c in chosen_center_nodes:
-#             if get_distance(node , c) <= L_max * delta:
-#                 in_circle += 1
-#         if in_circle >= k:
-#             nodes.remove(node)
+    for c in chosen_center_nodes:
+        nodes.remove(c)
 
-#     compute_mandatory_centers(G , center_nodes , L_max)
+    for node in G.nodes():
+        in_circle = 0
+        for c in chosen_center_nodes:
+            if get_distance(node , c) <= L_max * delta:
+                in_circle += 1
+        if in_circle >= k:
+            if node in nodes:
+                nodes.remove(node)
+
+    compute_mandatory_centers(G , center_nodes , L_max)
 
 
-#     if len(center_nodes) < 1:
-#         # initial_center_node = nodes[random.randint(0, len(nodes) - 1)]
-#         # initial_center_node = "A'dam 2"
-#         initial_center_node = get_initial_node(G , L_max * delta)
+    if len(center_nodes) < 1:
+        # initial_center_node = nodes[random.randint(0, len(nodes) - 1)]
+        # initial_center_node = "A'dam 2"
+        initial_center_node = get_initial_node(G , L_max * delta)
 
-#         print('init center:', initial_center_node)
-#         center_nodes.add(initial_center_node)
+        print('init center:', initial_center_node)
+        center_nodes.add(initial_center_node)
 
-#     for c in center_nodes:
-#         if c in nodes:
-#             nodes.remove(c)
-#         remove_nodes_inside_circle(c , nodes , L_max*delta)
-#     skip_end_nodes(G , nodes)
+    for c in center_nodes:
+        if c in nodes:
+            nodes.remove(c)
+        remove_nodes_inside_circle(c , nodes , L_max*delta)
+    skip_end_nodes(G , nodes)
 
-#     max_len = L_max * delta
-#     while max_len >= L_max * delta:
-#         # print("len of nodes " , len(nodes))
+    max_len = L_max * delta
+    while max_len >= L_max * delta:
+        # print("len of nodes " , len(nodes))
 
-#         dist = 0
+        dist = 0
         
 
-#         temp_list = set()
+        temp_list = set()
 
-#         for node in nodes:
-#             chosen_center = None
-#             min_len = 9999
-#             if G.degree[node] <=1:
-#                 nearest_node = get_nearest_node(G , node)
-#                 d = get_distance(node , nearest_node)
-#                 # if len(center_nodes) == 1:
-#                 #     print(node , nearest_node , d)
-#                 if d <= L_max * delta :
-#                     continue
-#             if node in temp_list:
-#                 continue
-#             for c_node in center_nodes:
+        for node in nodes:
+            chosen_center = None
+            min_len = 9999
+            if G.degree[node] <=1:
+                nearest_node = get_nearest_node(G , node)
+                d = get_distance(node , nearest_node)
+                # if len(center_nodes) == 1:
+                #     print(node , nearest_node , d)
+                if d <= L_max * delta :
+                    continue
+            if node in temp_list:
+                continue
+            for c_node in center_nodes:
 
 
-#                 dist = get_distance(c_node , node)
-#                 # adding weight
-#                 # if G.nodes[node]["type"] == "new_repeater_node":
-#                 #     dist = dist * .7
-#                 if dist < min_len:
-#                     min_len = dist
-#                     chosen_center = node
-#                     # print("dist " , dist , "m l" , max_len)
+                dist = get_distance(c_node , node)
+                # adding weight
+                # if G.nodes[node]["type"] == "new_repeater_node":
+                #     dist = dist * .7
+                if dist < min_len:
+                    min_len = dist
+                    chosen_center = node
+                    # print("dist " , dist , "m l" , max_len)
 
-#             if chosen_center is not None:
-#                 temp_list.add((chosen_center , min_len))
+            if chosen_center is not None:
+                temp_list.add((chosen_center , min_len))
         
 
 
-#         center , d = get_far_node_from_all_center( temp_list)
+        center , d = get_far_node_from_all_center( temp_list)
 
 
-#         if d >= L_max * delta:
-#             center_nodes.add(center)
-#             # print("chosen " , center , d)
-#             nodes.remove(center)
-#             max_len = d
-#             remove_nodes_inside_circle(center , nodes , L_max*delta)
+        if d >= L_max * delta:
+            center_nodes.add(center)
+            # print("chosen " , center , d)
+            nodes.remove(center)
+            max_len = d
+            remove_nodes_inside_circle(center , nodes , L_max*delta)
 
-#         else:
-#             break
+        else:
+            break
         
 
     
-#     print('center_nodes len' , len(center_nodes))
+    print('center_nodes len' , len(center_nodes))
 
-#     # print("==== t d " , t_d)
-#     return center_nodes
+    # print("==== t d " , t_d)
+    return center_nodes
 
 
 def get_initial_node(G , radius):
@@ -350,7 +369,7 @@ def check_pairs_k(G, center_nodes , L_max , unique_end_node_pairs , thread_no ):
 def choose_as_center(G , center_nodes , L_max , k):
     chosen_quantum_repeaters = set()
     center_pairs = list(permutations(center_nodes, 2))
-    edge_list = compute_edges_to_choose_more_centers(G , center_nodes , k)
+    edge_list = compute_edges_to_choose_more_centers(G , center_nodes , L_max , k)
     reversed_node_parent_dict = get_node_parent_dict(G , center_nodes , L_max , k)
     centers_dict = {}
     for center in center_nodes:
@@ -435,7 +454,7 @@ def get_node_parent_dict(G , center_nodes , L_max , k):
     reversed_node_parent_dict = {}
     center_pairs_dict = {}
 
-    edge_list = compute_edges_to_choose_more_centers(G , center_nodes , k)
+    edge_list = compute_edges_to_choose_more_centers(G , center_nodes , L_max , k)
 
     for i , j in edge_list:
         children1 = children_dict[i]

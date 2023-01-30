@@ -35,10 +35,12 @@ def solve(G , L_max , delta , k):
     # draw_graph(G , center_nodes)
 
 def main(file_name):
-    L_max = 130
+    L_max = 50
     delta =1
-    k = 1
+    k = 3
     G = read_graph_from_gml(file_name)
+    # draw_graph(G , [])
+
     print("read from graph done !!")
     
     compute_shortest_path(G)
@@ -55,8 +57,8 @@ def main(file_name):
 
 if __name__ == "__main__":
     start = time.time()
-    main('es_net.gml')
-    # main('SurfnetCore.gml')
+    # main('es_net.gml')
+    main('SurfnetCore.gml')
     end = time.time()
 
     print("time taken:" , end - start , "sec")

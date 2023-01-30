@@ -176,25 +176,26 @@ def compute_edges_to_place_new_repeaters(G , center_nodes , k):
     return edge_list
 
 
-def compute_edges_to_choose_more_centers(G , center_nodes , k):
+def compute_edges_to_choose_more_centers(G , center_nodes , Lmax , k):
     edge_list = set()
 
     if k ==1:
-        edge_list.update(compute_edges_to_choose_more_centers_k(G , center_nodes))
+        edge_list.update(compute_edges_to_choose_more_centers_k(G , center_nodes , Lmax))
     else:
         random_down_nodes_ = list(itertools.combinations(center_nodes, r=k-1))
         for tup in random_down_nodes_:
             G2 = G.copy()
             for i in range(k-1):
                 G2.remove_node(tup[i])
-            edge_list.update(compute_edges_to_choose_more_centers_k(G2 , center_nodes))
+            edge_list.update(compute_edges_to_choose_more_centers_k(G2 , center_nodes , Lmax))
     return edge_list
     
-def compute_edges_to_choose_more_centers_k(G , center_nodes):
+def compute_edges_to_choose_more_centers_k(G , center_nodes , Lmax):
     T = compute_mst_centers(G , center_nodes)
     edge_list = list()
     for i , j in T.edges():
-        edge_list.append((i , j))
+        if get_distance(i , j ) > Lmax:
+            edge_list.append((i , j))
     for node in G.nodes():
         if G.nodes[node]['type'] == 'end_node':
             # print('+++++++++= ' , G.edges(node))
