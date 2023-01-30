@@ -372,8 +372,20 @@ def choose_as_center(G , center_nodes , L_max , k):
     edge_list = compute_edges_to_choose_more_centers(G , center_nodes , L_max , k)
     reversed_node_parent_dict = get_node_parent_dict(G , center_nodes , L_max , k)
     centers_dict = {}
-    for center in center_nodes:
-        centers_dict[center] = k
+    # for center in center_nodes:
+    #     centers_dict[center] = k
+    
+    for i , j in edge_list:
+        if i not in centers_dict:
+            centers_dict[i] = k
+        else:
+            centers_dict[i] = centers_dict[i] + k
+
+        if j not in centers_dict:
+            centers_dict[j] = k
+        else:
+            centers_dict[j] = centers_dict[j] + k
+        
     for new_repeater in list(reversed_node_parent_dict):
         # new_repeater = list(reversed_node_parent_dict)[0]
         covered_centers = reversed_node_parent_dict[new_repeater]
