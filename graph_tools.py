@@ -149,11 +149,11 @@ def compute_mst_centers(G , center_nodes):
 def compute_edges_to_place_new_repeaters_k(G , center_nodes):
     T = compute_mst_centers(G , center_nodes)
     edge_list = list()
-    for i , j in T.edges():
-        (path_cost, sp) = nx.single_source_dijkstra(G=G, source=i, target=j, weight='length')
-        for i in range(len(sp)):
-            if i +1 < len(sp):
-                edge_list.append((sp[i] , sp[i+1]))
+    for node1 , node2 in T.edges():
+        (path_cost, sp) = nx.single_source_dijkstra(G=G, source=node1, target=node2, weight='length')
+        for k in range(len(sp)):
+            if k +1 < len(sp):
+                edge_list.append((sp[k] , sp[k+1]))
     for node in G.nodes():
         if G.nodes[node]['type'] == 'end_node':
             # print('+++++++++= ' , G.edges(node))
