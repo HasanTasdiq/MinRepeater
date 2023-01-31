@@ -372,36 +372,33 @@ def choose_as_center(G , center_nodes , L_max , k):
     edge_list = compute_edges_to_choose_more_centers(G , center_nodes , L_max , k)
     reversed_node_parent_dict = get_node_parent_dict(G , center_nodes , L_max , k)
     centers_dict = {}
-    # for center in center_nodes:
-    #     centers_dict[center] = k
+    center_pairs_dict = {}
+    for center in center_nodes:
+        centers_dict[center] = k
     
     for i , j in edge_list:
-        if i not in centers_dict:
-            centers_dict[i] = k
-        else:
-            centers_dict[i] = centers_dict[i] + k
+        if (i , j) not in center_pairs_dict:
+            center_pairs_dict[(i , j)] = k
 
-        if j not in centers_dict:
-            centers_dict[j] = k
-        else:
-            centers_dict[j] = centers_dict[j] + k
+
+
         
     for new_repeater in list(reversed_node_parent_dict):
         # new_repeater = list(reversed_node_parent_dict)[0]
-        covered_centers = reversed_node_parent_dict[new_repeater]
-        for covering_center in covered_centers:
-            if covering_center in centers_dict:
+        covered_center_pairs = reversed_node_parent_dict[new_repeater]
+        for covering_center_pair in covered_center_pairs:
+            if covering_center_pair in center_pairs_dict:
                 chosen_quantum_repeaters.add(new_repeater)
-                centers_dict[covering_center] = centers_dict[covering_center] - 1
-                if  centers_dict[covering_center] <=0:
-                    del centers_dict[covering_center]
+                center_pairs_dict[covering_center_pair] = center_pairs_dict[covering_center_pair] - 1
+                if  center_pairs_dict[covering_center_pair] <=0:
+                    del center_pairs_dict[covering_center_pair]
                     
         
     # print('edge list ' , edge_list)
     for i , j in edge_list:
         # i = pair[0]
         # j = pair[1]
-        if i not in centers_dict and j not in centers_dict:
+        if (i , j) not in center_pairs_dict:
             continue
         center1 = i
         (path_cost, sp) = nx.single_source_dijkstra(G=G, source=i, target=j, weight='length')
@@ -476,11 +473,11 @@ def get_node_parent_dict(G , center_nodes , L_max , k):
             
             for ch in common_children:
                 if ch not in reversed_node_parent_dict:
-                    parent_set = {i , j}
+                    parent_set = {(i , j)}
                     reversed_node_parent_dict[ch] = parent_set
                 else:
                     parent_set = reversed_node_parent_dict[ch]
-                    parent_set.update({i , j})
+                    parent_set.update({(i , j)})
                     reversed_node_parent_dict[ch] = parent_set
             center_pairs_dict[(i , j)] = common_children
     

@@ -35,9 +35,9 @@ def solve(G , L_max , delta , k):
     # draw_graph(G , center_nodes)
 
 def main(file_name):
-    L_max = 50
+    L_max = 80
     delta =1
-    k = 3
+    k = 1
     G = read_graph_from_gml(file_name)
     # draw_graph(G , [])
 
