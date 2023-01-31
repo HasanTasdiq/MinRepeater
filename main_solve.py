@@ -14,6 +14,11 @@ def solve(G , L_max , delta , k):
     compute_shortest_path(G)
 
 
+    print('---------------****888*******---------')
+    print(center_nodes)
+    # draw_graph(G , center_nodes)
+    # center_nodes = set(['Zwolle 1', 'Nijmegen 1', 'Utrecht 1'])
+    # draw_graph(G , center_nodes)
     choose_as_center(G , center_nodes , L_max, k)
 
     print("number of final quantum repeaters " , len(center_nodes))
@@ -35,7 +40,7 @@ def solve(G , L_max , delta , k):
     # draw_graph(G , center_nodes)
 
 def main(file_name):
-    L_max = 80
+    L_max = 130
     delta =1
     k = 1
     G = read_graph_from_gml(file_name)

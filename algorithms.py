@@ -15,6 +15,12 @@ terminate = False
 
 
 def compute_center_nodes(G , L_max , delta , k):
+
+    centers =  nx.center(G , weight='length')
+    print('###### ' , len(centers))
+    print(centers)
+
+
     center_nodes = set()
     mandatory_centers = set()
     G2 = G.copy()
@@ -33,7 +39,7 @@ def compute_center_nodes(G , L_max , delta , k):
 def get_center_nodes(G , chosen_center_nodes, L_max , delta ,k):
     center_nodes1 = get_center_nodes1(G , chosen_center_nodes, L_max , delta ,k)
     center_nodes2 = get_center_nodes2(G , chosen_center_nodes, L_max , delta ,k)
-
+    # return get_center_nodes3(G , chosen_center_nodes, L_max , delta ,k)
     if len(center_nodes1) <= len(center_nodes2):
         return center_nodes1
     else:
@@ -175,7 +181,24 @@ def get_center_nodes2(G , chosen_center_nodes, L_max , delta ,k):
     # print("==== t d " , t_d)
     return center_nodes
 
+def get_center_nodes3(G ,  chosen_center_nodes, L_max , delta ,k):
+    nodes = list(G.nodes())
 
+    center_nodes = set()
+    eccentricity_dict = nx.eccentricity(G  ,weight='length')
+    eccentricity_dict = dict(sorted(eccentricity_dict.items(), key=lambda item: item[1]))
+    eccentricity_list = list(eccentricity_dict)
+    while len(nodes) > 0:
+        center = eccentricity_list.pop(0)
+        if center in nodes:
+            center_nodes.add(center)
+            remove_nodes_inside_circle(center , nodes , L_max * delta)
+
+    print('---- get_center_nodes3 -----')
+    # print(eccentricity_dict)
+
+    print(len(center_nodes))
+    return center_nodes
 def get_initial_node(G , radius):
     max_nodes_inside_circle = 0
     init_node = None
@@ -187,6 +210,7 @@ def get_initial_node(G , radius):
         if nodes_inside_circle > max_nodes_inside_circle:
             init_node = node1
             max_nodes_inside_circle = nodes_inside_circle
+    # init_node = list(nx.center(G))[0]
 
     return init_node
 
@@ -266,7 +290,7 @@ def get_far_node_from_all_center(temp_list):
 def remove_nodes_inside_circle(center , nodes , radius):
     nodes_inside_circle = []
     for node in nodes:
-        if get_distance(node , center) <= radius:
+        if get_distance(node , center) <= radius :
             nodes_inside_circle.append(node)
     
     for node in nodes_inside_circle:
@@ -394,7 +418,7 @@ def choose_as_center(G , center_nodes , L_max , k):
                     del center_pairs_dict[covering_center_pair]
                     
         
-    # print('edge list ' , edge_list)
+    print('**center_pairs_dict len after choosing common nodes ' , len(center_pairs_dict))
     for i , j in edge_list:
         # i = pair[0]
         # j = pair[1]

@@ -76,6 +76,7 @@ def _compute_dist_lat_lon(graph):
         c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a))
         dist = np.round(R * c, 5)
         graph.edges[node1, node2]['length'] = dist
+        # graph.edges[node1, node2]['weight'] = dist
 def draw_graph(G , center_nodes):
     pos = nx.get_node_attributes(G, 'pos')
     repeater_nodes = []
