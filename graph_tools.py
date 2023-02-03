@@ -77,7 +77,16 @@ def _compute_dist_lat_lon(graph):
         dist = np.round(R * c, 5)
         graph.edges[node1, node2]['length'] = dist
         # graph.edges[node1, node2]['weight'] = dist
-def draw_graph(G , center_nodes):
+
+def _compute_dist_cartesian(graph):
+    """Compute the distance in km between two points based on their Cartesian coordinates."""
+    for edge in graph.edges():
+        node1, node2 = edge
+        dx = np.abs(graph.nodes[node1]['xcoord'] - graph.nodes[node2]['xcoord'])
+        dy = np.abs(graph.nodes[node1]['ycoord'] - graph.nodes[node2]['ycoord'])
+        dist = np.round(np.sqrt(np.square(dx) + np.square(dy)), 5)
+        graph.edges[node1, node2]['length'] = dist
+def draw_graph(G , center_nodes=[]):
     pos = nx.get_node_attributes(G, 'pos')
     repeater_nodes = []
     end_nodes = []
@@ -129,7 +138,45 @@ def compute_shortest_path(G):
                 shortest_path_dict[(i, j)] = (path_cost, sp)
     print('shortest_path_dict len' , len(shortest_path_dict))
 
-
+def create_graph_on_unit_cube(n_repeaters, radius, draw, seed=2):
+    """Create a geometric graph where nodes randomly get assigned a position. Two nodes are connected if their distance
+    does not exceed the given radius."""
+    np.random.seed = seed
+    G = nx.random_geometric_graph(n=n_repeaters, radius=radius, dim=2, seed=seed)
+    for node in G.nodes():
+        G.nodes[node]['type'] = 'repeater_node'
+    color_map = ['blue'] * len(G.nodes)
+    # Create the end nodes
+    G.add_node("C", pos=[0, 0], type='end_node')
+    G.add_node("B", pos=[1, 1], type='end_node')
+    G.add_node("A", pos=[0, 1], type='end_node')
+    G.add_node("D", pos=[1, 0], type='end_node')
+    G.nodes[3]['pos'] = [0.953, 0.750]
+    G.nodes[5]['pos'] = [0.25, 0.50]
+    # Manually connect the end nodes to the three nearest nodes
+    G.add_edge("C", 8)
+    G.add_edge("C", 5)
+    G.add_edge("C", 2)
+    G.add_edge("B", 9)
+    G.add_edge("B", 4)
+    G.add_edge("B", 3)
+    G.add_edge("A", 1)
+    G.add_edge("A", 2)
+    G.add_edge("A", 9)
+    G.add_edge("D", 3)
+    G.add_edge("D", 6)
+    G.add_edge("D", 7)
+    color_map.extend(['green'] * 4)
+    for node in G.nodes():
+        G.nodes[node]['xcoord'] = G.nodes[node]['pos'][0]
+        G.nodes[node]['ycoord'] = G.nodes[node]['pos'][1]
+    # Convert node labels to strings
+    label_remapping = {key: str(key) for key in G.nodes() if type(key) is not str}
+    G = nx.relabel_nodes(G, label_remapping)
+    if draw:
+        draw_graph(G)
+    _compute_dist_cartesian(G)
+    return G
 
 def compute_mst_centers(G , center_nodes):
     H = G.copy()
@@ -197,10 +244,9 @@ def compute_edges_to_choose_more_centers_k(G , center_nodes , Lmax):
     for i , j in T.edges():
         if get_distance(i , j ) > Lmax:
             edge_list.append((i , j))
-    for node in G.nodes():
-        if G.nodes[node]['type'] == 'end_node':
-            # print('+++++++++= ' , G.edges(node))
-            edge_list.append(list(G.edges(node))[0])
+    # for node in G.nodes():
+    #     if G.nodes[node]['type'] == 'end_node':
+    #         edge_list.append(list(G.edges(node))[0])
     
     return edge_list
 
