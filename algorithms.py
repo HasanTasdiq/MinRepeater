@@ -39,7 +39,7 @@ def compute_center_nodes(G , L_max , delta , k):
 def get_center_nodes(G , chosen_center_nodes, L_max , delta ,k):
     center_nodes1 = get_center_nodes1(G , chosen_center_nodes, L_max , delta ,k)
     center_nodes2 = get_center_nodes2(G , chosen_center_nodes, L_max , delta ,k)
-    # return get_center_nodes3(G , chosen_center_nodes, L_max , delta ,k)
+    return get_center_nodes4(G , chosen_center_nodes, L_max , delta ,k)
 
     # return center_nodes2
     print('len(center_nodes1) ' , len(center_nodes1) , 'len(center_nodes2)' , len(center_nodes2))
@@ -207,10 +207,45 @@ def get_center_nodes3(G ,  chosen_center_nodes, L_max , delta ,k):
 
 def get_center_nodes4(G ,  chosen_center_nodes, L_max , delta ,k):
     center_nodes = set()
-    node_circle_dict = calculate_children(G , L_max * delta)
-    for center in chosen_center_nodes:
-        nodes_inside_circle = node_circle_dict[center]
-        
+    nodes = list(G.nodes())
+    already_covered_nodes = set()
+
+    for c in chosen_center_nodes:
+        if c in nodes:
+            nodes.remove(c)
+
+    for node in G.nodes():
+        in_circle = 0
+        for c in chosen_center_nodes:
+            if get_distance(node , c) <= L_max * delta:
+                in_circle += 1
+        if in_circle >= k:
+            if node in nodes:
+                nodes.remove(node)
+
+    compute_mandatory_centers(G , center_nodes , L_max)
+    if len(center_nodes) < 1:
+        # initial_center_node = nodes[random.randint(0, len(nodes) - 1)]
+        # initial_center_node = "Apeldoorn"
+        initial_center_node = get_initial_node(G , L_max * delta)
+
+        print('init center:', initial_center_node)
+        center_nodes.add(initial_center_node)
+
+    for c in center_nodes:
+        if c in nodes:
+            nodes.remove(c)
+        covered_nodes = remove_nodes_inside_circle(c , nodes , L_max*delta)
+        already_covered_nodes.update(covered_nodes)
+    skip_end_nodes(G , nodes)
+
+
+    c_node = get_max_covering_node_inside_circle(G , center_nodes , L_max , delta)
+    while c_node is not None:
+        center_nodes.add(c_node)
+        c_node = get_max_covering_node_inside_circle(G , center_nodes , L_max , delta)
+    
+
     return center_nodes
 
 def get_initial_node(G , radius):
@@ -286,22 +321,29 @@ def skip_end_nodes(G , nodes):
             
 
 
-# def get_far_node_from_all_center(center_nodes , temp_list):
-#     prev_dist = 0
-    
-#     chosen_center2 = None
-#     for node  in temp_list:
-#         min_dist = 99999
-#         chosen_center = None
-#         for c_node in center_nodes:
-#             if get_distance(node , c_node) < min_dist:
-#                 min_dist  = get_distance(node , c_node)
-#                 chosen_center = node
+def get_max_covering_node_inside_circle(G , center_nodes , L_max , delta ):
+    prev_dist = 0
+    nodes_inside_circle = set()
+    node_circle_dict = calculate_children(G , L_max * delta)
+    for center in center_nodes:
+        # print('for ' , center , node_circle_dict[center])
+        nodes_inside_circle.update(node_circle_dict[center])
+    print('nodes_inside_circle len ' , len(nodes_inside_circle))
+    chosen_center = None
+    max_len= 0
 
-#         if min_dist > prev_dist and chosen_center is not None:
-#             chosen_center2 = chosen_center
-#             prev_dist = min_dist
-#     return chosen_center2 , prev_dist
+    for node  in nodes_inside_circle:
+        if node in center_nodes:
+            continue
+        covered_nodes = node_circle_dict[node]
+        covered_nodes = list(set(covered_nodes).difference(nodes_inside_circle).difference(center_nodes))
+        # if len(covered_nodes) <= 0:
+        #     break
+        if len(covered_nodes) > max_len:
+            max_len = len(covered_nodes)
+            chosen_center = node
+        
+    return chosen_center
 
 def get_far_node_from_all_center(temp_list):
     max_dist = 0
@@ -458,6 +500,8 @@ def choose_as_center(G , center_nodes , L_max , k):
         if path_cost > L_max :
             node1 = i
             for n in range(1 , len(sp)):
+                if (i , j) not in center_pairs_dict:
+                    continue
                 node2 = sp[n]
                 (dist2, sp2) = nx.single_source_dijkstra(G=G, source=center1, target=node2, weight='length')
                 if dist2 > L_max / remaining_k:

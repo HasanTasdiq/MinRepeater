@@ -21,7 +21,7 @@ def solve(G , L_max , delta , k):
     # draw_graph(G , center_nodes)
     choose_as_center(G , center_nodes , L_max, k)
 
-    print("number of final quantum repeaters " , len(center_nodes))
+    print("number of final quantum repeaters " , len(center_nodes) , 'for' , L_max , k)
 
 
 
@@ -40,7 +40,7 @@ def solve(G , L_max , delta , k):
     # draw_graph(G , center_nodes)
 
 def main(file_name):
-    L_max = 100
+    L_max = 60
     delta =1
     k = 1
     G = read_graph_from_gml(file_name)

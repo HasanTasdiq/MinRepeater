@@ -418,14 +418,14 @@ def get_nearest_center(G , node , center_nodes , L_max):
 def calculate_children( G , L_max):
     children_dict = {}
     for node in G.nodes():
-        children_dict[node] = list()
+        children_dict[node] = set()
     for i , j in shortest_path_dict:
         dist = get_distance(i , j)
         if dist <= L_max:
-            if i in children_dict:
-                children_dict[i].append(j)
-            if j in children_dict:
-                children_dict[j].append(i)
+            if i in children_dict and j in G.nodes():
+                children_dict[i].add(j)
+            if j in children_dict and i in G.nodes():
+                children_dict[j].add(i)
     
     # print(children_dict)
     return children_dict
