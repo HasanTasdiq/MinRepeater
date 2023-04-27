@@ -36,15 +36,15 @@ def solve(G , L_max , delta , k):
     # check_solution(G , center_nodes , L_max , k)
 
 
-
+    # center_nodes = ['Zwolle 1', 'Nijmegen 1', 'Utrecht 1']
     # draw_graph(G , center_nodes)
 
 def main(file_name):
-    L_max = 60
+    L_max = .7
     delta =1
     k = 1
-    G = read_graph_from_gml(file_name)
-    # G = create_graph_on_unit_cube(n_repeaters=10, radius=0.6, draw=False, seed=9)
+    # G = read_graph_from_gml(file_name)
+    G = create_graph_on_unit_cube(n_repeaters=10, radius=0.6, draw=False, seed=9)
 
     # draw_graph(G , [])
 

@@ -41,7 +41,7 @@ def get_center_nodes(G , chosen_center_nodes, L_max , delta ,k):
     center_nodes2 = get_center_nodes2(G , chosen_center_nodes, L_max , delta ,k)
     return get_center_nodes4(G , chosen_center_nodes, L_max , delta ,k)
 
-    # return center_nodes2
+    return center_nodes2
     print('len(center_nodes1) ' , len(center_nodes1) , 'len(center_nodes2)' , len(center_nodes2))
     if len(center_nodes1) <= len(center_nodes2):
         return center_nodes1
@@ -272,7 +272,7 @@ def get_center_with_max_node(G , radius , already_covered_nodes , center_nodes):
             if node1 != node2 and get_distance(node1 , node2) <= radius and node1 not in center_nodes and node1 not in already_covered_nodes and node2 not in already_covered_nodes:
             # if node1 != node2 and get_distance(node1 , node2) <= radius and node1 not in center_nodes and in_optimal_distance(node1 , center_nodes ,  radius) :
                 nodes_inside_circle += 1
-        if nodes_inside_circle > max_nodes_inside_circle:
+        if nodes_inside_circle > max_nodes_inside_circle :
             center_node = node1
             max_nodes_inside_circle = nodes_inside_circle
     print("@@@@@@@@@@@#########@@@@@@@@@@!! " , center_node , max_nodes_inside_circle)

@@ -97,25 +97,30 @@ def draw_graph(G , center_nodes=[]):
             end_nodes.append(node)
     fig, ax = plt.subplots(figsize=(7, 7))
     c_nodes = nx.draw_networkx_nodes(G=G, pos=pos, nodelist=center_nodes, node_shape='s', node_size=350,
-                                       node_color=[[1.0, 120 / 255, 0.]], label="End Node", linewidths=3)
+                                       node_color=[[0, 1, .6]], label="End Node", linewidths=3)
     c_nodes.set_edgecolor('k')
+
+    for c in center_nodes:
+        repeater_nodes.remove(c)
     rep_nodes = nx.draw_networkx_nodes(G=G, pos=pos, nodelist=repeater_nodes, node_size=350,
-                                       node_color=[[1, 1, 1]], label="Repeater Node")
+                                       node_color=[[255/255, 195/255, 0/255]], label="Repeater Node")
     rep_nodes.set_edgecolor('k')
     end_node_labels = {}
     repeater_node_labels = {}
     center_node_labels = {}
     for node, nodedata in G.nodes.items():
         # labels[node] = node
-        if G.nodes[node]['type'] == 'end_node':  # or node in self.repeater_nodes_chosen:
-            end_node_labels[node] = node
-        else:
-            repeater_node_labels[node] = node
+        # if G.nodes[node]['type'] == 'end_node':  # or node in self.repeater_nodes_chosen:
+        #     end_node_labels[node] = node
+        # else:
+        #     repeater_node_labels[node] = node
+        repeater_node_labels[node] = node
+
     for node in center_nodes:
         center_node_labels[node] = node
-    nx.draw_networkx_labels(G=G, pos=pos, labels=center_node_labels, font_size=7, font_weight="bold", font_color="w",
+    nx.draw_networkx_labels(G=G, pos=pos, labels=center_node_labels, font_size=9, font_weight="bold", font_color="w",
                             font_family='serif')
-    nx.draw_networkx_labels(G=G, pos=pos, labels=repeater_node_labels, font_size=5, font_weight="bold")
+    nx.draw_networkx_labels(G=G, pos=pos, labels=repeater_node_labels, font_size=9, font_weight="bold")
     nx.draw_networkx_edges(G=G, pos=pos, width=1)
     plt.axis('off')
     margin = 0.33
