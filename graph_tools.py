@@ -359,6 +359,116 @@ def add_quantum_repeater_between_centers( G , center_nodes , mandatory_centers ,
                 _compute_dist_lat_lon(G)
     nx.set_node_attributes(G, pos, name='pos')
     print("====================== number of nodes 2 " , G.number_of_nodes() , " ===================================")
+
+
+def add_quantum_repeater( G , center_nodes , mandatory_centers , L_max , k):
+    print("=============add_quantum_repeater========= number of nodes 1 " , G.number_of_nodes() , " ===================================")
+    # print("type: " , G.nodes["SNLCA"]['type'])
+    edge_list = compute_edges_to_place_new_repeaters(G , G.nodes() , k)
+
+    print("edge list len " , len(edge_list))
+
+    q_node  = 0
+    q_node_list = []
+    q_node_edges = []
+    pos = nx.get_node_attributes(G, 'pos')
+    done_dest_node = {}
+    removable_edge = []
+       
+    for i, j in edge_list:
+        length1 = 0
+        length2 = 0
+        center1 = None
+        center2 = None
+        q_node_added = False
+        if i not in center_nodes:
+            center1 = get_nearest_center(G , i , center_nodes , L_max)
+            if center1 != j:
+                length1 = get_distance(i , center1)
+        if j not in center_nodes:
+            center2 = get_nearest_center(G, j , center_nodes , L_max)
+            if center2 != i:
+                length2 = get_distance(j , center2)
+
+        if center1 != None and center1 == center2:
+            continue
+        
+        
+
+        length = G[i][j]['length']
+
+            
+        if length > L_max :
+            length = length + length1 + length2
+            lat1 = G.nodes[i]['Latitude']
+            lon1 = G.nodes[i]['Longitude']
+            lat2 = G.nodes[j]['Latitude']
+            lon2 = G.nodes[j]['Longitude']
+            lat3 = lat1
+            lon3 = lon1
+            node1 = i
+            node2 = i
+            no_of_slice = (int(length / (L_max )) + 1) * k
+            placement_dist = length / no_of_slice
+            print('placement dist:: ' , placement_dist , length)
+            for it in range(1 ,  no_of_slice):
+
+
+            # placement_dist = length / (int(length / L_max) + 1)
+            # for it in range(1 ,  int(length / L_max) + 1):
+
+                node_data = {}
+                dist = it * placement_dist
+                if it == 1:
+                    if dist <= get_distance(center1 , i):
+                        center_nodes.add(i)
+                        # continue
+                    # dist = dist - length1
+
+                if  placement_dist >= get_distance_long_lat(lat3 , lon3 , lat2 , lon2):
+                    node2 = node1
+                    center_nodes.add(j)
+                    continue
+                lat3 , lon3 = get_intermediate_point(lat1 , lon1 , lat2 , lon2 , dist)
+                # print(lat1 , lon1 , lat3 , lon3)
+                if i == 'LBNL' or j == 'LBNL':
+                    print(i , j , placement_dist , length1 , dist , center1 , center2 , get_distance(center1 , i) , G[i][j]['length'])
+
+                node2 = "QN" +str(q_node) 
+                node_data['node'] = node2
+                node_data['Latitude'] = float(lat3)
+                node_data['Longitude'] = float(lon3)
+
+
+                q_node_list.append(node_data)
+                q_node_edges.append((node1 , node2))
+                node1 = node2
+                q_node += 1
+                q_node_added = True
+            if q_node_added > 0:
+                q_node_edges.append((node2 , j))
+                removable_edge.append((i, j))
+            # print('== ' , i , '-' , j)
+    
+
+    for node_data in q_node_list:
+        G.add_node(node_data['node'], Longitude=node_data['Longitude'] , Latitude=node_data['Latitude'])
+        G.nodes[node_data['node']]['type'] = 'new_repeater_node'
+        pos[node_data['node']] = [node_data['Longitude'], node_data['Latitude']]
+        # add new nodes as center nodes
+        center_nodes.add(node_data['node'])
+    for i , j in removable_edge:
+        print(i , '-' , j)
+        try:
+            G.remove_edge(i , j)
+        except:
+            print()
+    G.add_edges_from(q_node_edges)
+    for i, j in G.edges():
+        if 'length' not in G[i][j]:
+                _compute_dist_lat_lon(G)
+    nx.set_node_attributes(G, pos, name='pos')
+    print("==========add_quantum_repeater============ number of nodes 2 " , G.number_of_nodes() , " ===================================")
 def get_intermediate_point(lat1 , lon1 , lat2 , lon2 , d):
     constant = np.pi / 180
     R = 6371
@@ -421,6 +531,7 @@ def get_nearest_center(G , node , center_nodes , L_max):
                     return n
     return None
 def calculate_children( G , L_max):
+    print('in calculate children------------------' , len(shortest_path_dict))
     children_dict = {}
     for node in G.nodes():
         children_dict[node] = set()

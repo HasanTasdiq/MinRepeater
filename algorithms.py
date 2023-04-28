@@ -511,10 +511,13 @@ def choose_as_center(G , center_nodes , L_max , k):
                         del center_pairs_dict[(i , j)]
                     center1 = node1
                 node1 = node2
+    print('**center_pairs_dict len after choosing graph path nodes ' , len(center_pairs_dict))
+    
     # print('--------------chosen_quantum_repeaters------------')
     # print(chosen_quantum_repeaters)
     # print('--------------------------------------------------')
     center_nodes.update(chosen_quantum_repeaters)
+    print(center_nodes)
 
     
     if len(center_pairs_dict) > 0:
